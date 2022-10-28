@@ -1,0 +1,1 @@
+curl --location --request GET 'http://sharepoint2013.hvftech.hdsflab.com/sites/SharePointHome/droids/_api/Web/' --header 'Accept: application/json;odata=verbose' --ntlm -u 'HVFTECH\ereyes:P@ssw0rd123!'
