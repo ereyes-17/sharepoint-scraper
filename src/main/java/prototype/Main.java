@@ -336,6 +336,51 @@ public class Main {
                 "    }\n" +
                 "  }\n" +
                 "}");
+        System.out.println(" 6. Collect all data, apply date range filter to lists & order folders by ItemCount (.json config included after command)");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
+        System.out.println("    myFilter.json content:");
+        System.out.println("{\n" +
+                "     \"filter\": {\n" +
+                "       \"lists\": {\n" +
+                "         \"BeforeDate_itemModified\" : \"2022-10-24T23:59:59\",\n" +
+                "         \"AfterDate_itemModified\": \"2022-10-22T23:59:59\"\n" +
+                "       },\n" +
+                "        \"folders\": {\n" +
+                "          \"BeforeDate_Modified\" : null,\n" +
+                "          \"AfterDate_Modified\": null\n" +
+                "        },\n" +
+                "        \"files\": {\n" +
+                "          \"BeforeDate_Modified\" : null,\n" +
+                "          \"AfterDate_Modified\": null\n" +
+                "        }\n" +
+                "     }\n" +
+                "     \"orderBy\": {\n" +
+                "        \"folders\": [\"ItemCount\"]\n" +
+                "     }\n" +
+                "}");
+        System.out.println(" 7. Skip subsites, order folders by ItemCount, Title & order lists by Title (.json config included after command)");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
+        System.out.println("    myFilter.json content:");
+        System.out.println("{\n" +
+                "     \"filter\": {\n" +
+                "       \"lists\": {\n" +
+                "         \"BeforeDate_itemModified\" : null,\n" +
+                "         \"AfterDate_itemModified\": null\n" +
+                "       },\n" +
+                "        \"folders\": {\n" +
+                "          \"BeforeDate_Modified\" : null,\n" +
+                "          \"AfterDate_Modified\": null\n" +
+                "        },\n" +
+                "        \"files\": {\n" +
+                "          \"BeforeDate_Modified\" : null,\n" +
+                "          \"AfterDate_Modified\": null\n" +
+                "        }\n" +
+                "     }\n" +
+                "     \"orderBy\": {\n" +
+                "        \"lists\": [\"Title\"],\n" +
+                "        \"folders\": [\"ItemCount,Title\"]\n" +
+                "     }\n" +
+                "}");
         System.out.println("Note that you can apply multiple filters, just specify the values in the json config.");
         System.out.println("For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)");
         System.exit(0);
