@@ -1,3 +1,4 @@
 site-file-content/*
 *.json
 !.gitignore
+target/*
