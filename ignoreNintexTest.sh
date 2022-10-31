@@ -1,1 +1,0 @@
-java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5000 -jar target/SharePointPrototype-0.0.4-jar-with-dependencies.jar http://sharepoint2013.hvftech.hdsflab.com/sites/SharePointHome/test_oa ereyes P@ssw0rd123! HVFTECH --output=true
