@@ -18,10 +18,7 @@ import java.nio.file.Paths;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Main {
 
@@ -46,7 +43,7 @@ public class Main {
         /* optional arguments */
         String[] optionalArguments = Arrays.copyOfRange(args, 3, args.length);
         boolean skipSubObject = false;
-        String objectToSkip = null;
+        String skipArgs = null;
         boolean noDownload = false;
         String pathToFilterConfig = null;
 
@@ -57,7 +54,7 @@ public class Main {
             }
             if (argument.contains("--skip=")) {
                 skipSubObject = true;
-                objectToSkip = argument.split("=")[1];
+                skipArgs = argument.split("=")[1];
             }
             if (argument.equalsIgnoreCase("--no-download")) {
                 noDownload = true;
@@ -67,34 +64,19 @@ public class Main {
             }
         }
 
-        /* Create the sharepoint http client with the sharepoint config */
+        /* Initialize the configuration class */
         sharepointConfig = new SharepointConfig(rootSite, username, password, domain, noDownload);
         /* Before initializing the client, let's check if any configuration files are needed */
         if (pathToFilterConfig != null) {
             /* Update sharepointConfig */
             updateConfigForDateFilter(pathToFilterConfig);
         }
-        SharepointClient sharepointClient = new SharepointClient(sharepointConfig);
-
-        /* determine if and what we need to skip */
+        /* Let's also update the skip objects to the config */
         if (skipSubObject) {
-            switch (objectToSkip.trim()) {
-                case "subsites":
-                    objectToSkip = sharepointConfig.getSKIP_SUBSITES();
-                    break;
-                case "lists":
-                    objectToSkip = sharepointConfig.getSKIP_LISTS();
-                    break;
-                case "folders":
-                    objectToSkip = sharepointConfig.getSKIP_FOLDERS();
-                    break;
-                case "files":
-                    objectToSkip = sharepointConfig.getSKIP_FILES();
-                    break;
-                default:
-                    objectToSkip = null;
-            }
+            updateConfigWithSkipArgs(skipArgs);
         }
+
+        SharepointClient sharepointClient = new SharepointClient(sharepointConfig);
 
         System.out.println("-----------------------------------------------------------------------------");
         System.out.println("Arguments provided: ");
@@ -103,12 +85,12 @@ public class Main {
         System.out.println("     PASSWORD: " + password);
         System.out.println("       DOMAIN: " + domain);
         System.out.println("       OUTPUT: " + outputInformation);
-        System.out.println("  SKIP OBJECT: " + skipSubObject + " --> " + ((objectToSkip != null) ? objectToSkip.split("=")[1] : null));
+        System.out.println("  SKIP OBJECT: " + skipSubObject + " --> " + ((skipSubObject) ? skipArgs : null));
         System.out.println("FILE DOWNLOAD: " + !noDownload);
         System.out.println("-----------------------------------------------------------------------------");
 
         /* call the client to collect data */
-        sites = sharepointClient.collectSiteData(objectToSkip);
+        sites = sharepointClient.collectSiteData();
 
         assert sites != null;
 
@@ -133,6 +115,47 @@ public class Main {
             }
         }
     }
+
+    private static void updateConfigWithSkipArgs(String skipArgs) {
+        if (skipArgs.contains(",")) {
+            String[] sharepointObjects = skipArgs.split(",");
+            for (String sharepointObj : sharepointObjects) {
+                switch (sharepointObj.trim()) {
+                    case "subsites":
+                        sharepointConfig.setSkipSubsites(true);
+                        break;
+                    case "lists":
+                        sharepointConfig.setSkipLists(true);
+                        break;
+                    case "folders":
+                        sharepointConfig.setSkipFolders(true);
+                        break;
+                    case "files":
+                        sharepointConfig.setSkipFiles(true);
+                        break;
+                    default:
+                        System.out.println(sharepointObj + " is NOT a Sharepoint object.");
+                        System.exit(1);
+                }
+            }
+        } else {
+            if (skipArgs.trim().equalsIgnoreCase("subsites")) {
+                sharepointConfig.setSkipSubsites(true);
+            } else if (skipArgs.trim().equalsIgnoreCase("lists")) {
+                sharepointConfig.setSkipLists(true);
+            }
+            else if (skipArgs.trim().equalsIgnoreCase("folders")) {
+                sharepointConfig.setSkipFolders(true);
+            }
+            else if (skipArgs.trim().equalsIgnoreCase("files")) {
+                sharepointConfig.setSkipFiles(true);
+            } else {
+                System.out.println(skipArgs + " is NOT a Sharepoint object.");
+                System.exit(1);
+            }
+        }
+    }
+
 
     private static void generateOutputFiles(SharepointSite site) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -264,16 +287,19 @@ public class Main {
         System.out.println("    domain  : Sharepoint domain");
         System.out.println("  Optional arguments (any order):");
         System.out.println("    --skip=       : Skip a Sharepoint object. Options include 'subsites','lists','folders','files'");
+        System.out.println("                  : You may skip multiple objects. Look at example 3.");
         System.out.println("    --output=     : Do you want output files? Options include 'true', 'false' (default is false)");
         System.out.println("    --no-download : Do you want to fetch discovered files? Default is false, add argument to make true");
         System.out.println("    --filter-conf=: Include a filter (date-range): Path to the .json file is required");
         System.out.println("EXAMPLES: ");
         System.out.println("  1. Collect all site data (includes file download)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.6-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain");
         System.out.println("  2. Skip subsites, don't download files");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.6-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites --no-download");
-        System.out.println("  3. Skip lists, apply AfterDate_Modified filter to files (.json config included after command)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.6-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites --no-download");
+        System.out.println("  3. Skip subsites and folders. (As a result, no files get downloaded because we're skipping folders)");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites,folders");
+        System.out.println("  4. Skip lists, apply AfterDate_Modified filter to files (.json config included after command)");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json");
         System.out.println("    myFilter.json content: ");
         System.out.println("    {\n" +
                 "  \"filter\": {\n" +
@@ -291,8 +317,8 @@ public class Main {
                 "    }\n" +
                 "  }\n" +
                 "}");
-        System.out.println("  4. Collect all data, apply date range filter to lists (.json config included after command)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.6-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json");
+        System.out.println("  5. Collect all data, apply date range filter to lists (.json config included after command)");
+        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
         System.out.println("    myFilter.json content: ");
         System.out.println("    {\n" +
                 "  \"filter\": {\n" +
@@ -310,6 +336,7 @@ public class Main {
                 "    }\n" +
                 "  }\n" +
                 "}");
+        System.out.println("Note that you can apply multiple filters, just specify the values in the json config.");
         System.out.println("For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)");
         System.exit(0);
     }

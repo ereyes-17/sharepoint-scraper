@@ -1,1 +1,3 @@
 site-file-content/*
+*.json
+!.gitignore

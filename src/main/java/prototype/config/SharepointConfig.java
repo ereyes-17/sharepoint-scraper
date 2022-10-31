@@ -7,12 +7,12 @@ public class SharepointConfig {
     protected String username;
     protected String password;
     protected String domain;
-    protected final String SKIP_SUBSITES = "--skip=subsites";
-    protected final String SKIP_LISTS = "--skip=lists";
-    protected final String SKIP_FOLDERS = "--skip=folders";
-    protected final String SKIP_FILES = "--skip=files";
     protected final String ODATA_PARAM = "application/json;odata=verbose";
     protected boolean noDownload;
+    protected boolean skipSubsites = false;
+    protected boolean skipLists = false;
+    protected boolean skipFolders = false;
+    protected boolean skipFiles = false;
     protected String beforeDate_listFilter;
     protected String afterDate_listFilter;
     protected String beforeDate_folderFilter;
@@ -48,23 +48,40 @@ public class SharepointConfig {
         return domain;
     }
 
-    public String getSKIP_SUBSITES() {
-        return SKIP_SUBSITES;
-    }
-
-    public String getSKIP_LISTS() {
-        return SKIP_LISTS;
-    }
-
-    public String getSKIP_FOLDERS() {
-        return SKIP_FOLDERS;
-    }
-
-    public String getSKIP_FILES() {
-        return SKIP_FILES;
-    }
     public boolean getNoDownload() {
         return noDownload;
+    }
+
+    public boolean isSkipSubsites() {
+        return skipSubsites;
+    }
+
+    public void setSkipSubsites(boolean skipSubsites) {
+        this.skipSubsites = skipSubsites;
+    }
+
+    public boolean isSkipLists() {
+        return skipLists;
+    }
+
+    public void setSkipLists(boolean skipLists) {
+        this.skipLists = skipLists;
+    }
+
+    public boolean isSkipFolders() {
+        return skipFolders;
+    }
+
+    public void setSkipFolders(boolean skipFolders) {
+        this.skipFolders = skipFolders;
+    }
+
+    public boolean isSkipFiles() {
+        return skipFiles;
+    }
+
+    public void setSkipFiles(boolean skipFiles) {
+        this.skipFiles = skipFiles;
     }
 
     public String getODATA_PARAM() {

@@ -58,8 +58,7 @@ public class SharepointObjectBuilder {
         currentSiteTitle = title;
 
         List<SharepointList> lists = null;
-        boolean skipLists = (objectToSkip != null && objectToSkip.equalsIgnoreCase(sharepointConfig.getSKIP_LISTS()));
-        if (!skipLists) {
+        if (!sharepointConfig.isSkipLists()) {
             try {
                 lists = sharepointClient.determineSiteLists(url);
             } catch (IOException e) {
@@ -68,8 +67,7 @@ public class SharepointObjectBuilder {
         }
 
         List<SharepointFolder> folders = null;
-        boolean skipFolders = (objectToSkip != null && objectToSkip.equalsIgnoreCase(sharepointConfig.getSKIP_FOLDERS()));
-        if (!skipFolders) {
+        if (!sharepointConfig.isSkipFolders()) {
             try {
                 folders = sharepointClient.determineSiteFolders(url);
             } catch (IOException e) {
@@ -178,8 +176,7 @@ public class SharepointObjectBuilder {
         int itemCount = data.getInt("ItemCount");
 
         List<SharepointFile> files = null;
-        boolean skipFiles = (objectToSkip != null && objectToSkip.equalsIgnoreCase(sharepointConfig.getSKIP_FILES()));
-        if (!skipFiles) {
+        if (!sharepointConfig.isSkipFiles()) {
             try {
                 files = (itemCount == 0) ? null : sharepointClient.determineFiles(data.getJSONObject("Files"));
             } catch (IOException e) {

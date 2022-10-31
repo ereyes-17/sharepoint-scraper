@@ -110,10 +110,7 @@ public class SharepointClient {
                 .build();
     }
 
-    public List<SharepointSite> collectSiteData(String objectToSkip) throws IOException {
-        /* we want our object builder to know what object to skip, if any */
-        sharepointObjectBuilder.setObjectToSkip(objectToSkip);
-
+    public List<SharepointSite> collectSiteData() throws IOException {
         String targetApiPath = SharepointUrlConfig.SHAREPOINT_API_PATH;
         HttpGet httpGet = sharepointRequest.createGetRequestObject(sharepointConfig.getRootSite() + targetApiPath);
 
@@ -131,8 +128,7 @@ public class SharepointClient {
         sites.add(currentSite);
 
         /* Determine the sub sites */
-        boolean skipSubSites = (objectToSkip != null && objectToSkip.equalsIgnoreCase(sharepointConfig.getSKIP_SUBSITES()));
-        if (!skipSubSites) {
+        if (!sharepointConfig.isSkipSubsites()) {
             String websPath = d.getJSONObject("Webs").getJSONObject("__deferred").getString("uri");
             determineSubSites(websPath);
         }
