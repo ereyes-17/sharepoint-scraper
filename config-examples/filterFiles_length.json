@@ -1,0 +1,10 @@
+{
+  "filter": {
+    "files": {
+      "Length": {
+        "value": 15000,
+        "operator": "gt"
+      }
+    }
+  }
+}

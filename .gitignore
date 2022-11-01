@@ -1,4 +1,5 @@
 site-file-content/*
 *.json
 target/*
+!config-examples/*.json
 !.gitignore

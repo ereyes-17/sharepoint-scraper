@@ -1,0 +1,14 @@
+{
+  "filter": {
+    "lists": {
+      "AfterDate_itemModified": "2022-10-24T23:59:59"
+    },
+    "folders": {
+      "AfterDate_Modified": "2022-10-18T23:59:59",
+      "BeforeDate_Modified": "2022-10-22T23:00:00"
+    },
+    "files": {
+      "AfterDate_Modified": "2022-10-22T11:30:00"
+    }
+  }
+}
