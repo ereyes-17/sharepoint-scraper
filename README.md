@@ -118,5 +118,6 @@ myFilter.json content:
      }
 }
  ```
+The <code>orderBy</code> field may also have an <code>arrangement</code> property to return the result in <em>ascending</em> or <em>descending</em> order denoted by <strong>"asc"</strong> or <strong>"desc"</strong> respectively.  
 Note that you can apply multiple filters, just specify the values in the json config.
 For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)

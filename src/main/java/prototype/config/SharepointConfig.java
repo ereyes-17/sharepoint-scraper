@@ -22,6 +22,9 @@ public class SharepointConfig {
     protected List<String> orderBy_listCriteria;
     protected List<String> orderBy_folderCriteria;
     protected List<String> orderBy_fileCriteria;
+    protected String orderByArrangement;
+    protected int size_fileFilter;
+    protected String operator_fileSizeFilter;
 
     public SharepointConfig(String rootSite, String username, String password,
                             String domain, boolean noDownload) {
@@ -158,5 +161,29 @@ public class SharepointConfig {
 
     public void setOrderBy_fileCriteria(List<String> orderBy_fileCriteria) {
         this.orderBy_fileCriteria = orderBy_fileCriteria;
+    }
+
+    public String getOrderByArrangement() {
+        return orderByArrangement;
+    }
+
+    public void setOrderByArrangement(String orderByArrangement) {
+        this.orderByArrangement = orderByArrangement;
+    }
+
+    public int getSize_fileFilter() {
+        return size_fileFilter;
+    }
+
+    public void setSize_fileFilter(int size_fileFilter) {
+        this.size_fileFilter = size_fileFilter;
+    }
+
+    public String getOperator_fileSizeFilter() {
+        return operator_fileSizeFilter;
+    }
+
+    public void setOperator_fileSizeFilter(String operator_fileSizeFilter) {
+        this.operator_fileSizeFilter = operator_fileSizeFilter;
     }
 }

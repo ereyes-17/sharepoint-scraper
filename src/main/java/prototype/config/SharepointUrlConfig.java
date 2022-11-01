@@ -15,5 +15,6 @@ public class SharepointUrlConfig {
     public static String SHAREPOINT_FILE_DATE_AFTER_FILTER = "?$filter=TimeLastModified%20ge%20datetime'<afterDate>Z'";
     public static String SHAREPOINT_FILE_DATERANGE_FILTER ="?$filter=TimeLastModified%20lt%20datetime'<beforeDate>Z'%20and%20TimeLastModified%20ge%20datetime'<afterDate>Z'";
     public static String SHAREPOINT_ORDER_BY_FILTER = "?$orderby=";
+    public static String SHAREPOINT_FILE_SIZE_FILTER = "Length%20<operator>%20<size>";
 
 }

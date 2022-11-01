@@ -181,57 +181,82 @@ public class Main {
 
     private static void updateConfigForDateFilter(String pathToFilterConfig) {
         try {
+            /* Read the config file */
             String fileContentAsString = new String(Files.readAllBytes(Paths.get(pathToFilterConfig)));
 
+            /* Parse into json and get the filters object */
             JSONObject jsonObject = new JSONObject(fileContentAsString);
             JSONObject filterObj = jsonObject.getJSONObject("filter");
 
-            JSONObject listsObj = filterObj.getJSONObject("lists");
+            /* Determine filters for lists, folders and files, if any */
             try {
+                JSONObject listsObj = filterObj.getJSONObject("lists");
                 sharepointConfig.setBeforeDate_listFilter(listsObj.getString("BeforeDate_itemModified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setBeforeDate_listFilter(null);
             }
             try {
+                JSONObject listsObj = filterObj.getJSONObject("lists");
                 sharepointConfig.setAfterDate_listFilter(listsObj.getString("AfterDate_itemModified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setAfterDate_listFilter(null);
             }
 
-            JSONObject foldersObj = filterObj.getJSONObject("folders");
             try {
+                JSONObject foldersObj = filterObj.getJSONObject("folders");
                 sharepointConfig.setBeforeDate_folderFilter(foldersObj.getString("BeforeDate_Modified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setBeforeDate_folderFilter(null);
             }
             try {
+                JSONObject foldersObj = filterObj.getJSONObject("folders");
                 sharepointConfig.setAfterDate_folderFilter(foldersObj.getString("AfterDate_Modified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setAfterDate_folderFilter(null);
             }
 
-            JSONObject filesObj = filterObj.getJSONObject("files");
             try {
+                JSONObject filesObj = filterObj.getJSONObject("files");
                 sharepointConfig.setBeforeDate_fileFilter(filesObj.getString("BeforeDate_Modified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setBeforeDate_fileFilter(null);
             }
             try {
+                JSONObject filesObj = filterObj.getJSONObject("files");
                 sharepointConfig.setAfterDate_fileFilter(filesObj.getString("AfterDate_Modified"));
             } catch (JSONException ignored) {
                 sharepointConfig.setAfterDate_fileFilter(null);
             }
 
+            try {
+                JSONObject filesObj = filterObj.getJSONObject("files");
+                sharepointConfig.setAfterDate_fileFilter(filesObj.getString("AfterDate_Modified"));
+            } catch (JSONException ignored) {
+                sharepointConfig.setAfterDate_fileFilter(null);
+            }
+
+            /* check for file size filter */
+            try {
+                JSONObject filesObj = filterObj.getJSONObject("files");
+                JSONObject fileSizeObj = filesObj.getJSONObject("Length");
+                sharepointConfig.setSize_fileFilter(fileSizeObj.getInt("value"));
+                sharepointConfig.setOperator_fileSizeFilter(fileSizeObj.getString("operator"));
+            } catch (JSONException ignored) {
+                sharepointConfig.setSize_fileFilter(-1); // we can't set null to an int
+                sharepointConfig.setOperator_fileSizeFilter(null);
+            }
+
+            /* Get the orderBy object */
             JSONObject orderByObject = jsonObject.getJSONObject("orderBy");
 
+            /* Determine preferred ordering for lists, folders and files, if any */
             try {
                 JSONArray listOrderElements = orderByObject.getJSONArray("lists");
                 List<String> elements = convertJSONArrayToList(listOrderElements);
                 if (!elements.isEmpty()) {
                     sharepointConfig.setOrderBy_listCriteria(elements);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (JSONException ignored) {
                 sharepointConfig.setOrderBy_listCriteria(null);
             }
 
@@ -241,8 +266,7 @@ public class Main {
                 if (!elements.isEmpty()) {
                     sharepointConfig.setOrderBy_folderCriteria(elements);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (JSONException ignored) {
                 sharepointConfig.setOrderBy_folderCriteria(null);
             }
 
@@ -252,9 +276,16 @@ public class Main {
                 if (!elements.isEmpty()) {
                     sharepointConfig.setOrderBy_fileCriteria(elements);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } catch (JSONException ignored) {
                 sharepointConfig.setOrderBy_fileCriteria(null);
+            }
+
+            /* Determine the arrangement of objects (ascending, descending) */
+            try {
+                String arrangement = orderByObject.getString("arrangement");
+                sharepointConfig.setOrderByArrangement(arrangement);
+            } catch (JSONException ignored) {
+                /* do nothing b/c the default is ascending (per the docs) */;
             }
 
             System.out.println("Filter settings applied to the configuration...");
@@ -381,6 +412,7 @@ public class Main {
                 "        \"folders\": [\"ItemCount,Title\"]\n" +
                 "     }\n" +
                 "}");
+        System.out.println("The 'orderBy' field may also have an 'arrangement' property to return the result in ascending or descending order denoted by \"asc\" or \"desc\" respectively.");
         System.out.println("Note that you can apply multiple filters, just specify the values in the json config.");
         System.out.println("For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)");
         System.exit(0);

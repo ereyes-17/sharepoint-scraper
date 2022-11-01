@@ -125,15 +125,28 @@ public class SharepointContentFilter {
         String afterDate = sharepointConfig.getAfterDate_fileFilter();
 
         if (beforeDate != null && afterDate == null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_BEFORE_FILTER
+            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_BEFORE_FILTER
                     .replace("<beforeDate>", beforeDate);
         } else if (beforeDate == null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_AFTER_FILTER
+            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_AFTER_FILTER
                     .replace("<afterDate>", afterDate);
         } else if (beforeDate != null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATERANGE_FILTER
+            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATERANGE_FILTER
                     .replace("<beforeDate>", beforeDate)
                     .replace("<afterDate>", afterDate);
+        }
+
+        /* check for size filter */
+        if (sharepointConfig.getSize_fileFilter() >= 0 && sharepointConfig.getOperator_fileSizeFilter() != null) {
+            if (beforeDate != null || afterDate != null) {
+                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_FILE_SIZE_FILTER
+                        .replace("<operator>", sharepointConfig.getOperator_fileSizeFilter())
+                        .replace("<size>", String.valueOf(sharepointConfig.getSize_fileFilter()));
+            } else {
+                sitePathUrl = sitePathUrl + "?$filter=" + SharepointUrlConfig.SHAREPOINT_FILE_SIZE_FILTER
+                        .replace("<operator>", sharepointConfig.getOperator_fileSizeFilter())
+                        .replace("<size>", String.valueOf(sharepointConfig.getSize_fileFilter()));
+            }
         }
         return sitePathUrl;
     }
@@ -153,10 +166,15 @@ public class SharepointContentFilter {
             }
             String orderString = new String(stringBuilder);
             if (sitePathUrl.contains("$filter")) {
-                return sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             } else {
-                return sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             }
+            /* check for order */
+            if (sharepointConfig.getOrderByArrangement() != null) {
+                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+            }
+            return sitePathUrl;
         }
 
         return sitePathUrl;
@@ -175,12 +193,16 @@ public class SharepointContentFilter {
                 }
             }
             String orderString = new String(stringBuilder);
-            System.out.println("ORDER STRING: " + orderString);
             if (sitePathUrl.contains("$filter")) {
-                return sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             } else {
-                return sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             }
+            /* check for order */
+            if (sharepointConfig.getOrderByArrangement() != null) {
+                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+            }
+            return sitePathUrl;
         }
         return sitePathUrl;
     }
@@ -199,10 +221,15 @@ public class SharepointContentFilter {
             }
             String orderString = new String(stringBuilder);
             if (sitePathUrl.contains("$filter")) {
-                return sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             } else {
-                return sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
             }
+            /* check for order */
+            if (sharepointConfig.getOrderByArrangement() != null) {
+                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+            }
+            return sitePathUrl;
         }
         return sitePathUrl;
     }
