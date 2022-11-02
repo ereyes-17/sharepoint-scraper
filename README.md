@@ -1,4 +1,10 @@
 # Sharepoint-prototype
+<h3>Requirements</h3>
+* Java 8 or later
+* Maven
+* Any operating system
+* Running Sharepoint application
+
 <h3>Usage:</h3>
 <h4>Required arguments (positional):</h4>
 <ul>
@@ -22,102 +28,9 @@ EXAMPLES:
    ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites --no-download```
 3. Skip subsites and folders. (As a result, no files get downloaded because we're skipping folders)  
    ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites,folders```
-4. Skip lists, apply AfterDate_Modified filter to files (.json config included after command)  
+4. Skip lists, apply a configuration  
    ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json```  
-  myFilter.json content:
-```{
-{
-     "filter": {
-       "lists": {
-         "BeforeDate_itemModified" : null,
-         "AfterDate_itemModified": null
-       },
-        "folders": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        },
-        "files": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": "2022-10-24T23:59:59"
-        }
-     },
-     "orderBy": {
-     }
-}
- ```
-5. Collect all data, apply date range filter to lists (.json config included after command)  
-   ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json```  
-   myFilter.json content: 
-```{
-{
-     "filter": {
-       "lists": {
-         "BeforeDate_itemModified" : "2022-10-24T23:59:59",
-         "AfterDate_itemModified": "2022-10-22T23:59:59"
-       },
-        "folders": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        },
-        "files": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        }
-     }
-     "orderBy": {
-     }
-}
- ```
- 
-6. Collect all data, apply date range filter to lists & order folders by ItemCount (.json config included after command)  
-   ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json```  
-myFilter.json content: 
-```{
-{
-     "filter": {
-       "lists": {
-         "BeforeDate_itemModified" : "2022-10-24T23:59:59",
-         "AfterDate_itemModified": "2022-10-22T23:59:59"
-       },
-        "folders": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        },
-        "files": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        }
-     }
-     "orderBy": {
-        "folders": ["ItemCount"]
-     }
-}
- ```
-7. Skip subsites, order folders by ItemCount, Title & order lists by Title (.json config included after command)  
-   ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json --skip=subsites```  
-   myFilter.json content:
-```{
-{
-     "filter": {
-       "lists": {
-         "BeforeDate_itemModified" : null,
-         "AfterDate_itemModified": null
-       },
-        "folders": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        },
-        "files": {
-          "BeforeDate_Modified" : null,
-          "AfterDate_Modified": null
-        }
-     }
-     "orderBy": {
-        "lists": ["Title"],
-        "folders": ["ItemCount,Title"]
-     }
-}
- ```
-The <code>orderBy</code> field may also have an <code>arrangement</code> property to return the result in <em>ascending</em> or <em>descending</em> order denoted by <strong>"asc"</strong> or <strong>"desc"</strong> respectively.  
-Note that you can apply multiple filters, just specify the values in the json config.
-For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)
+   * Examples of json configs are in the config-examples folder
+   * You can apply multiple filters, just specify the values in the json config  
+
+For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com) or please visit https://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption to review odata query options

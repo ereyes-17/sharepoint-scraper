@@ -1,0 +1,11 @@
+{
+  "order": {
+    "lists": {
+      "fields": ["Title"]
+    },
+    "folders": {
+      "fields": ["TimeCreated"],
+      "arrangement": "desc"
+    }
+  }
+}

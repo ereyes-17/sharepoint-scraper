@@ -85,75 +85,74 @@ public class SharepointContentFilter {
     }
 
     public String applyFilterToListPath(String sitePathUrl) {
-        String beforeDate = sharepointConfig.getBeforeDate_listFilter();
-        String afterDate = sharepointConfig.getAfterDate_listFilter();
-
-        if (beforeDate != null && afterDate == null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_LIST_DATE_BEFORE_FILTER
-                    .replace("<beforeDate>", beforeDate);
-        } else if (beforeDate == null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_LIST_DATE_AFTER_FILTER
-                    .replace("<afterDate>", afterDate);
-        } else if (beforeDate != null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_LIST_DATERANGE_FILTER
-                    .replace("<beforeDate>", beforeDate)
-                    .replace("<afterDate>", afterDate);
+        List<String> listFilterOptions = sharepointConfig.getListFilterOptions();
+        if (listFilterOptions != null) {
+            StringBuilder sitePathUrlBuilder = new StringBuilder("?$filter=");
+            for (String element : listFilterOptions) {
+                if (listFilterOptions.indexOf(element) != listFilterOptions.size() - 1) {
+                    sitePathUrlBuilder
+                            .append(element)
+                            .append(" ")
+                            .append("and")
+                            .append(" ");
+                } else {
+                    sitePathUrlBuilder.append(element);
+                }
+            }
+            /* Replace any spaces with %20 */
+            final String urlFilterString = sitePathUrlBuilder.toString().replace(" ", "%20");
+            sitePathUrl = sitePathUrl + urlFilterString;
         }
         return sitePathUrl;
     }
 
     public String applyFilterToFolderPath(String sitePathUrl) {
-        String beforeDate = sharepointConfig.getBeforeDate_folderFilter();
-        String afterDate = sharepointConfig.getAfterDate_folderFilter();
-
-        if (beforeDate != null && afterDate == null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FOLDER_DATE_BEFORE_FILTER
-                    .replace("<beforeDate>", beforeDate);
-        } else if (beforeDate == null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FOLDER_DATE_AFTER_FILTER
-                    .replace("<afterDate>", afterDate);
-        } else if (beforeDate != null && afterDate != null) {
-            return sitePathUrl + SharepointUrlConfig.SHAREPOINT_FOLDER_DATERANGE_FILTER
-                    .replace("<beforeDate>", beforeDate)
-                    .replace("<afterDate>", afterDate);
+        List<String> folderFilterOptions = sharepointConfig.getFolderFilterOptions();
+        if (folderFilterOptions != null) {
+            StringBuilder sitePathUrlBuilder = new StringBuilder("?$filter=");
+            for (String element : folderFilterOptions) {
+                if (folderFilterOptions.indexOf(element) != folderFilterOptions.size() - 1) {
+                    sitePathUrlBuilder
+                            .append(element)
+                            .append(" ")
+                            .append("and")
+                            .append(" ");
+                } else {
+                    sitePathUrlBuilder.append(element);
+                }
+            }
+            /* Replace any spaces with %20 */
+            final String urlFilterString = sitePathUrlBuilder.toString().replace(" ", "%20");
+            sitePathUrl = sitePathUrl + urlFilterString;
         }
         return sitePathUrl;
     }
 
     public String applyFilterToFilePath(String sitePathUrl) {
-        String beforeDate = sharepointConfig.getBeforeDate_fileFilter();
-        String afterDate = sharepointConfig.getAfterDate_fileFilter();
-
-        if (beforeDate != null && afterDate == null) {
-            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_BEFORE_FILTER
-                    .replace("<beforeDate>", beforeDate);
-        } else if (beforeDate == null && afterDate != null) {
-            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATE_AFTER_FILTER
-                    .replace("<afterDate>", afterDate);
-        } else if (beforeDate != null && afterDate != null) {
-            sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_FILE_DATERANGE_FILTER
-                    .replace("<beforeDate>", beforeDate)
-                    .replace("<afterDate>", afterDate);
-        }
-
-        /* check for size filter */
-        if (sharepointConfig.getSize_fileFilter() >= 0 && sharepointConfig.getOperator_fileSizeFilter() != null) {
-            if (beforeDate != null || afterDate != null) {
-                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_FILE_SIZE_FILTER
-                        .replace("<operator>", sharepointConfig.getOperator_fileSizeFilter())
-                        .replace("<size>", String.valueOf(sharepointConfig.getSize_fileFilter()));
-            } else {
-                sitePathUrl = sitePathUrl + "?$filter=" + SharepointUrlConfig.SHAREPOINT_FILE_SIZE_FILTER
-                        .replace("<operator>", sharepointConfig.getOperator_fileSizeFilter())
-                        .replace("<size>", String.valueOf(sharepointConfig.getSize_fileFilter()));
+        List<String> fileFilterOptions = sharepointConfig.getFileFilterOptions();
+        if (fileFilterOptions != null) {
+            StringBuilder sitePathUrlBuilder = new StringBuilder("?$filter=");
+            for (String element : fileFilterOptions) {
+                if (fileFilterOptions.indexOf(element) != fileFilterOptions.size() - 1) {
+                    sitePathUrlBuilder
+                            .append(element)
+                            .append(" ")
+                            .append("and")
+                            .append(" ");
+                } else {
+                    sitePathUrlBuilder.append(element);
+                }
             }
+            /* Replace any spaces with %20 */
+            final String urlFilterString = sitePathUrlBuilder.toString().replace(" ", "%20");
+            sitePathUrl = sitePathUrl + urlFilterString;
         }
         return sitePathUrl;
     }
 
     public String applyOrderToListPath(String sitePathUrl) {
         /* order odata query will be checked AFTER the filter query */
-        List<String> listOrderCriteria = sharepointConfig.getOrderBy_listCriteria();
+        List<String> listOrderCriteria = sharepointConfig.getListOrderFields();
         StringBuilder stringBuilder = new StringBuilder();
 
         if (listOrderCriteria != null) {
@@ -166,13 +165,9 @@ public class SharepointContentFilter {
             }
             String orderString = new String(stringBuilder);
             if (sitePathUrl.contains("$filter")) {
-                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&?$orderby=" + orderString;
             } else {
-                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
-            }
-            /* check for order */
-            if (sharepointConfig.getOrderByArrangement() != null) {
-                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+                sitePathUrl = sitePathUrl + "?$orderby=" + orderString;
             }
             return sitePathUrl;
         }
@@ -181,7 +176,7 @@ public class SharepointContentFilter {
     }
 
     public String applyOrderToFolderPath(String sitePathUrl) {
-        List<String> folderOrderCriteria = sharepointConfig.getOrderBy_folderCriteria();
+        List<String> folderOrderCriteria = sharepointConfig.getFolderOrderFields();
         StringBuilder stringBuilder = new StringBuilder();
 
         if (folderOrderCriteria != null) {
@@ -194,13 +189,9 @@ public class SharepointContentFilter {
             }
             String orderString = new String(stringBuilder);
             if (sitePathUrl.contains("$filter")) {
-                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&?$orderby=" + orderString;
             } else {
-                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
-            }
-            /* check for order */
-            if (sharepointConfig.getOrderByArrangement() != null) {
-                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+                sitePathUrl = sitePathUrl + "?$orderby=" + orderString;
             }
             return sitePathUrl;
         }
@@ -208,7 +199,7 @@ public class SharepointContentFilter {
     }
 
     public String applyOrderToFilePath(String sitePathUrl) {
-        List<String> fileOrderCriteria = sharepointConfig.getOrderBy_fileCriteria();
+        List<String> fileOrderCriteria = sharepointConfig.getFileOrderFields();
         StringBuilder stringBuilder = new StringBuilder();
 
         if (fileOrderCriteria != null) {
@@ -221,13 +212,9 @@ public class SharepointContentFilter {
             }
             String orderString = new String(stringBuilder);
             if (sitePathUrl.contains("$filter")) {
-                sitePathUrl = sitePathUrl + "&" + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
+                sitePathUrl = sitePathUrl + "&?$orderby=" + orderString;
             } else {
-                sitePathUrl = sitePathUrl + SharepointUrlConfig.SHAREPOINT_ORDER_BY_FILTER + orderString;
-            }
-            /* check for order */
-            if (sharepointConfig.getOrderByArrangement() != null) {
-                sitePathUrl = sitePathUrl + "%20" + sharepointConfig.getOrderByArrangement();
+                sitePathUrl = sitePathUrl + "?$orderby=" + orderString;
             }
             return sitePathUrl;
         }

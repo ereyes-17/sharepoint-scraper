@@ -1,0 +1,27 @@
+{
+  "filter": {
+    "files": [
+      "TimeLastModified gt datetime'2022-10-18T23:59:59' and TimeLastModified lt datetime'2022-10-24T00:00:00Z'",
+      "Length gt 15000 and Length lt 32000"
+    ],
+    "lists": [
+      "LastItemModifiedDate gt datetime'2022-10-18T23:59:59Z'"
+    ],
+    "folders": [
+      "TimeCreated lt datetime'2022-10-20T23:59:59Z'",
+      "ItemCount gt 0"
+    ]
+  },
+  "order": {
+    "files": {
+      "fields": ["Length", "Name"],
+      "arrangement": "desc"
+    },
+    "lists": {
+      "fields": ["Title"]
+    },
+    "folders": {
+      "fields": ["ItemCount"]
+    }
+  }
+}

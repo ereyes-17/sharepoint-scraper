@@ -208,34 +208,6 @@ public class SharepointClient {
         return lists;
     }
 
-    public  List<String> determineListFields(JSONObject fieldsObj) throws IOException {
-        System.out.println("Searching for fields");
-
-        JSONObject deferredObj = fieldsObj.getJSONObject("__deferred");
-        String fieldsPath = deferredObj.getString("uri");
-
-        HttpGet httpGet = sharepointRequest.createGetRequestObject(fieldsPath);
-        HttpResponse response = getSharePointData(httpGet);
-        sharepointResponseExceptionHandler.handleResponseFromStatusCode(response.getStatusLine().getStatusCode());
-        JSONObject responseBody = new JSONObject(EntityUtils.toString(response.getEntity()));
-        EntityUtils.consumeQuietly(response.getEntity());
-
-        /* view the results array from the response */
-        JSONObject d = (JSONObject) responseBody.get("d");
-        JSONArray resultsArray = d.getJSONArray("results");
-
-        List<String> fields = new ArrayList<>();
-
-        if (resultsArray.length() > 0) {
-            resultsArray.forEach(result -> {
-                JSONObject resultObj = (JSONObject) result;
-                fields.add(resultObj.getString("Title"));
-            });
-        }
-
-        return fields;
-    }
-
     public  List<SharepointListItem> determineListItems(JSONObject itemsObj) throws IOException {
         System.out.println("Searching for list items");
 
@@ -262,22 +234,6 @@ public class SharepointClient {
         }
 
         return items;
-    }
-
-    public JSONObject discoverListItemFieldValues(JSONObject fVATObject) throws IOException {
-        System.out.println("Searching for list item field values");
-
-        JSONObject deferredObj = fVATObject.getJSONObject("__deferred");
-        String fVATPath = deferredObj.getString("uri");
-
-        HttpGet httpGet = sharepointRequest.createGetRequestObject(fVATPath);
-        HttpResponse response = getSharePointData(httpGet);
-        sharepointResponseExceptionHandler.handleResponseFromStatusCode(response.getStatusLine().getStatusCode());
-        JSONObject responseBody = new JSONObject(EntityUtils.toString(response.getEntity()));
-        EntityUtils.consumeQuietly(response.getEntity());
-        
-        /* when returning, we want to remove the metadata because at this point, we've already acquired it */
-        return responseBody.getJSONObject("d");
     }
 
     public List<String> discoverListItemAttachments(JSONObject attachmentsObj, String currentSiteTitle) throws IOException {

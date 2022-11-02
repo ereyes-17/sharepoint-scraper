@@ -1,5 +1,7 @@
 package prototype.config;
 
+import org.json.JSONArray;
+
 import java.util.List;
 
 public class SharepointConfig {
@@ -13,18 +15,12 @@ public class SharepointConfig {
     protected boolean skipLists = false;
     protected boolean skipFolders = false;
     protected boolean skipFiles = false;
-    protected String beforeDate_listFilter;
-    protected String afterDate_listFilter;
-    protected String beforeDate_folderFilter;
-    protected String afterDate_folderFilter;
-    protected String beforeDate_fileFilter;
-    protected String afterDate_fileFilter;
-    protected List<String> orderBy_listCriteria;
-    protected List<String> orderBy_folderCriteria;
-    protected List<String> orderBy_fileCriteria;
-    protected String orderByArrangement;
-    protected int size_fileFilter;
-    protected String operator_fileSizeFilter;
+    protected List<String> listFilterOptions;
+    protected List<String> folderFilterOptions;
+    protected List<String> fileFilterOptions;
+    protected List<String> listOrderFields;
+    protected List<String> folderOrderFields;
+    protected List<String> fileOrderFields;
 
     public SharepointConfig(String rootSite, String username, String password,
                             String domain, boolean noDownload) {
@@ -91,99 +87,55 @@ public class SharepointConfig {
         return ODATA_PARAM;
     }
 
-    public String getBeforeDate_listFilter() {
-        return beforeDate_listFilter;
+    public void setListFilterOptions(List<String> elements) {
+        this.listFilterOptions = elements;
     }
 
-    public void setBeforeDate_listFilter(String beforeDate_listFilter) {
-        this.beforeDate_listFilter = beforeDate_listFilter;
+    public List<String> getListFilterOptions() {
+        return listFilterOptions;
     }
 
-    public String getAfterDate_listFilter() {
-        return afterDate_listFilter;
+    public List<String> getFolderFilterOptions() {
+        return folderFilterOptions;
     }
 
-    public void setAfterDate_listFilter(String afterDate_listFilter) {
-        this.afterDate_listFilter = afterDate_listFilter;
+    public void setFolderFilterOptions(List<String> folderFilterOptions) {
+        this.folderFilterOptions = folderFilterOptions;
     }
 
-    public String getBeforeDate_folderFilter() {
-        return beforeDate_folderFilter;
+    public List<String> getFileFilterOptions() {
+        return fileFilterOptions;
     }
 
-    public void setBeforeDate_folderFilter(String beforeDate_folderFilter) {
-        this.beforeDate_folderFilter = beforeDate_folderFilter;
+    public void setFileFilterOptions(List<String> fileFilterOptions) {
+        this.fileFilterOptions = fileFilterOptions;
     }
 
-    public String getAfterDate_folderFilter() {
-        return afterDate_folderFilter;
+    public void setListOrderFields(List<String> elements) {
+        this.listOrderFields = elements;
     }
 
-    public void setAfterDate_folderFilter(String afterDate_folderFilter) {
-        this.afterDate_folderFilter = afterDate_folderFilter;
+    public void setRootSite(String rootSite) {
+        this.rootSite = rootSite;
     }
 
-    public String getBeforeDate_fileFilter() {
-        return beforeDate_fileFilter;
+    public List<String> getListOrderFields() {
+        return listOrderFields;
     }
 
-    public void setBeforeDate_fileFilter(String beforeDate_fileFilter) {
-        this.beforeDate_fileFilter = beforeDate_fileFilter;
+    public List<String> getFolderOrderFields() {
+        return folderOrderFields;
     }
 
-    public String getAfterDate_fileFilter() {
-        return afterDate_fileFilter;
+    public void setFolderOrderFields(List<String> folderOrderFields) {
+        this.folderOrderFields = folderOrderFields;
     }
 
-    public void setAfterDate_fileFilter(String afterDate_fileFilter) {
-        this.afterDate_fileFilter = afterDate_fileFilter;
+    public List<String> getFileOrderFields() {
+        return fileOrderFields;
     }
 
-    public List<String> getOrderBy_listCriteria() {
-        return orderBy_listCriteria;
-    }
-
-    public void setOrderBy_listCriteria(List<String> orderyBy_listCriteria) {
-        this.orderBy_listCriteria = orderyBy_listCriteria;
-    }
-
-    public List<String> getOrderBy_folderCriteria() {
-        return orderBy_folderCriteria;
-    }
-
-    public void setOrderBy_folderCriteria(List<String> orderBy_folderCriteria) {
-        this.orderBy_folderCriteria = orderBy_folderCriteria;
-    }
-
-    public List<String> getOrderBy_fileCriteria() {
-        return orderBy_fileCriteria;
-    }
-
-    public void setOrderBy_fileCriteria(List<String> orderBy_fileCriteria) {
-        this.orderBy_fileCriteria = orderBy_fileCriteria;
-    }
-
-    public String getOrderByArrangement() {
-        return orderByArrangement;
-    }
-
-    public void setOrderByArrangement(String orderByArrangement) {
-        this.orderByArrangement = orderByArrangement;
-    }
-
-    public int getSize_fileFilter() {
-        return size_fileFilter;
-    }
-
-    public void setSize_fileFilter(int size_fileFilter) {
-        this.size_fileFilter = size_fileFilter;
-    }
-
-    public String getOperator_fileSizeFilter() {
-        return operator_fileSizeFilter;
-    }
-
-    public void setOperator_fileSizeFilter(String operator_fileSizeFilter) {
-        this.operator_fileSizeFilter = operator_fileSizeFilter;
+    public void setFileOrderFields(List<String> fileOrderFields) {
+        this.fileOrderFields = fileOrderFields;
     }
 }

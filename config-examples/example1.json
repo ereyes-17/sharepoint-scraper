@@ -1,0 +1,10 @@
+{
+  "filter": {
+    "files": [
+      "TimeLastModified gt datetime'2022-10-18T23:59:59Z'"
+    ],
+    "lists": [
+      "LastItemModifiedDate le datetime'2022-10-18T23:59:59Z'"
+    ]
+  }
+}

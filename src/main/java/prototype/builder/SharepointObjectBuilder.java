@@ -108,7 +108,6 @@ public class SharepointObjectBuilder {
         String createdDate = data.getString("Created");
         String lastItemModifiedDate = data.getString("LastItemModifiedDate");
         String lastItemDeletedDate = data.getString("LastItemDeletedDate");
-        List<String> fields = sharepointClient.determineListFields(data.getJSONObject("Fields"));
         List<SharepointListItem> items = sharepointClient.determineListItems(data.getJSONObject("Items"));
         boolean hidden = data.getBoolean("Hidden");
         int itemCount = data.getInt("ItemCount");
@@ -116,7 +115,7 @@ public class SharepointObjectBuilder {
         SharepointMetadata metadata = buildSharepointMetadata(data.getJSONObject("__metadata"));
 
         return new SharepointList(id, title, createdDate, lastItemModifiedDate, lastItemDeletedDate,
-                fields, items, hidden, itemCount, metadata);
+                items, hidden, itemCount, metadata);
     }
 
     public SharepointListItem buildSharepointListItem(JSONObject data) {
@@ -149,14 +148,6 @@ public class SharepointObjectBuilder {
                 e.printStackTrace();
             }
         }
-        /* we want the data to be the field values as text to eliminate noise and get valuable data */
-        JSONObject fVATObj = data.getJSONObject("FieldValuesAsText");
-        try {
-            data = sharepointClient.discoverListItemFieldValues(fVATObj);
-        } catch (IOException ignored) {
-            /* if this raises an exception, it's ok, we'll just get more data */
-        }
-
 
         SharepointMetadata metadata = buildSharepointMetadata(data.getJSONObject("__metadata"));
 

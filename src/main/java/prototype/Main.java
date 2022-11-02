@@ -10,7 +10,6 @@ import prototype.config.SharepointConfig;
 import prototype.model.site.SharepointSite;
 
 import java.io.*;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import java.nio.file.Files;
@@ -69,7 +68,7 @@ public class Main {
         /* Before initializing the client, let's check if any configuration files are needed */
         if (pathToFilterConfig != null) {
             /* Update sharepointConfig */
-            updateConfigForDateFilter(pathToFilterConfig);
+            updateConfigWithInputProperties(pathToFilterConfig);
         }
         /* Let's also update the skip objects to the config */
         if (skipSubObject) {
@@ -107,11 +106,13 @@ public class Main {
 
         /* display threads running at the end of the program */
         Set<Thread> currentThreads = Thread.getAllStackTraces().keySet();
-        if (currentThreads.size() > 4) {
+        if (currentThreads.stream().anyMatch(thread -> thread.getName().contains("Thread-"))) {
             System.out.println("Caution when viewing results, some of the following threads may still be downloading files...");
             System.out.printf("%-15s \t %-15s \t %-15s \t %s\n", "NAME", "STATE", "PRIORITY", "IS_DAEMON");
             for (Thread t : currentThreads) {
-                System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+                if (t.getName().contains("Thread-")) {
+                    System.out.printf("%-15s \t %-15s \t %-15d \t %s\n", t.getName(), t.getState(), t.getPriority(), t.isDaemon());
+                }
             }
         }
     }
@@ -179,113 +180,102 @@ public class Main {
         }
     }
 
-    private static void updateConfigForDateFilter(String pathToFilterConfig) {
+    private static void updateConfigWithInputProperties(String pathToFilterConfig) {
         try {
             /* Read the config file */
             String fileContentAsString = new String(Files.readAllBytes(Paths.get(pathToFilterConfig)));
 
-            /* Parse into json and get the filters object */
+            /* Parse file content into a json object */
             JSONObject jsonObject = new JSONObject(fileContentAsString);
-            JSONObject filterObj = jsonObject.getJSONObject("filter");
 
-            /* Determine filters for lists, folders and files, if any */
+            /* Retrieve the filters property */
+            JSONObject filterObj = null;
             try {
-                JSONObject listsObj = filterObj.getJSONObject("lists");
-                sharepointConfig.setBeforeDate_listFilter(listsObj.getString("BeforeDate_itemModified"));
+                filterObj = jsonObject.getJSONObject("filter");
             } catch (JSONException ignored) {
-                sharepointConfig.setBeforeDate_listFilter(null);
+                /* We don't really care here */
             }
-            try {
-                JSONObject listsObj = filterObj.getJSONObject("lists");
-                sharepointConfig.setAfterDate_listFilter(listsObj.getString("AfterDate_itemModified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setAfterDate_listFilter(null);
-            }
-
-            try {
-                JSONObject foldersObj = filterObj.getJSONObject("folders");
-                sharepointConfig.setBeforeDate_folderFilter(foldersObj.getString("BeforeDate_Modified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setBeforeDate_folderFilter(null);
-            }
-            try {
-                JSONObject foldersObj = filterObj.getJSONObject("folders");
-                sharepointConfig.setAfterDate_folderFilter(foldersObj.getString("AfterDate_Modified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setAfterDate_folderFilter(null);
-            }
-
-            try {
-                JSONObject filesObj = filterObj.getJSONObject("files");
-                sharepointConfig.setBeforeDate_fileFilter(filesObj.getString("BeforeDate_Modified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setBeforeDate_fileFilter(null);
-            }
-            try {
-                JSONObject filesObj = filterObj.getJSONObject("files");
-                sharepointConfig.setAfterDate_fileFilter(filesObj.getString("AfterDate_Modified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setAfterDate_fileFilter(null);
-            }
-
-            try {
-                JSONObject filesObj = filterObj.getJSONObject("files");
-                sharepointConfig.setAfterDate_fileFilter(filesObj.getString("AfterDate_Modified"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setAfterDate_fileFilter(null);
-            }
-
-            /* check for file size filter */
-            try {
-                JSONObject filesObj = filterObj.getJSONObject("files");
-                JSONObject fileSizeObj = filesObj.getJSONObject("Length");
-                sharepointConfig.setSize_fileFilter(fileSizeObj.getInt("value"));
-                sharepointConfig.setOperator_fileSizeFilter(fileSizeObj.getString("operator"));
-            } catch (JSONException ignored) {
-                sharepointConfig.setSize_fileFilter(-1); // we can't set null to an int
-                sharepointConfig.setOperator_fileSizeFilter(null);
-            }
-
-            /* Get the orderBy object */
-            JSONObject orderByObject = jsonObject.getJSONObject("orderBy");
-
-            /* Determine preferred ordering for lists, folders and files, if any */
-            try {
-                JSONArray listOrderElements = orderByObject.getJSONArray("lists");
-                List<String> elements = convertJSONArrayToList(listOrderElements);
-                if (!elements.isEmpty()) {
-                    sharepointConfig.setOrderBy_listCriteria(elements);
+            /* If we received a filter prop, let's see what the user wants to filter */
+            if (filterObj != null) {
+                try {
+                    /* Check to see if there's a 'lists' prop */
+                    JSONArray listFilterOptions = filterObj.getJSONArray("lists");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(listFilterOptions);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setListFilterOptions(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
                 }
-            } catch (JSONException ignored) {
-                sharepointConfig.setOrderBy_listCriteria(null);
-            }
-
-            try {
-                JSONArray folderOrderElements = orderByObject.getJSONArray("folders");
-                List<String> elements = convertJSONArrayToList(folderOrderElements);
-                if (!elements.isEmpty()) {
-                    sharepointConfig.setOrderBy_folderCriteria(elements);
+                /* Repeat the process for folders and lists */
+                try {
+                    /* Check to see if there's a 'folders' prop */
+                    JSONArray folderFilterOptions = filterObj.getJSONArray("folders");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(folderFilterOptions);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFolderFilterOptions(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
                 }
-            } catch (JSONException ignored) {
-                sharepointConfig.setOrderBy_folderCriteria(null);
-            }
-
-            try {
-                JSONArray fileOrderElements = orderByObject.getJSONArray("files");
-                List<String> elements = convertJSONArrayToList(fileOrderElements);
-                if (!elements.isEmpty()) {
-                    sharepointConfig.setOrderBy_fileCriteria(elements);
+                try {
+                    /* Check to see if there's a 'lists' prop */
+                    JSONArray fileFilterOptions = filterObj.getJSONArray("files");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(fileFilterOptions);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFileFilterOptions(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
                 }
-            } catch (JSONException ignored) {
-                sharepointConfig.setOrderBy_fileCriteria(null);
             }
 
-            /* Determine the arrangement of objects (ascending, descending) */
+            /* Retrieve the order property */
+            JSONObject orderObj = null;
             try {
-                String arrangement = orderByObject.getString("arrangement");
-                sharepointConfig.setOrderByArrangement(arrangement);
+                orderObj = jsonObject.getJSONObject("order");
             } catch (JSONException ignored) {
-                /* do nothing b/c the default is ascending (per the docs) */;
+                /* We don't really care here */
+            }
+            /* If we received an order prop, let's see what the user order the user wants */
+            if (orderObj != null) {
+                try {
+                    /* Check to see if there's a 'lists' prop */
+                    JSONObject listOrderObj = orderObj.getJSONObject("lists");
+                    /* Get the fields list */
+                    JSONArray listOrderFields = listOrderObj.getJSONArray("fields");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(listOrderFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setListOrderFields(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
+                /* Repeat the process for folders and lists */
+                try {
+                    /* Check to see if there's a 'lists' prop */
+                    JSONObject folderOrderObj = orderObj.getJSONObject("folders");
+                    /* Get the fields list */
+                    JSONArray folderOrderFields = folderOrderObj.getJSONArray("fields");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(folderOrderFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFolderOrderFields(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
+                try {
+                    /* Check to see if there's a 'lists' prop */
+                    JSONObject filesOrderObj = orderObj.getJSONObject("files");
+                    /* Get the fields list */
+                    JSONArray filesOrderFields = filesOrderObj.getJSONArray("fields");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(filesOrderFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFileOrderFields(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
             }
 
             System.out.println("Filter settings applied to the configuration...");
@@ -299,7 +289,6 @@ public class Main {
     private static List<String> convertJSONArrayToList(JSONArray jsonArray) {
         List<String> elements = new ArrayList<>();
         for (Object o : jsonArray) {
-            System.out.println(o.toString());
             try {
                 elements.add(o.toString());
             } catch (NullPointerException ignored) {
@@ -329,92 +318,11 @@ public class Main {
         System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites --no-download");
         System.out.println("  3. Skip subsites and folders. (As a result, no files get downloaded because we're skipping folders)");
         System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=subsites,folders");
-        System.out.println("  4. Skip lists, apply AfterDate_Modified filter to files (.json config included after command)");
+        System.out.println("  4. Skip lists, apply a configuration");
         System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json");
-        System.out.println("    myFilter.json content: ");
-        System.out.println("    {\n" +
-                "  \"filter\": {\n" +
-                "    \"lists\": {\n" +
-                "      \"BeforeDate_itemModified\" : null,\n" +
-                "      \"AfterDate_itemModified\": null\n" +
-                "    },\n" +
-                "    \"folders\": {\n" +
-                "      \"BeforeDate_Modified\" : null,\n" +
-                "      \"AfterDate_Modified\": null\n" +
-                "    },\n" +
-                "    \"files\": {\n" +
-                "      \"BeforeDate_Modified\" : null,\n" +
-                "      \"AfterDate_Modified\": \"2022-10-24T23:59:59\"\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
-        System.out.println("  5. Collect all data, apply date range filter to lists (.json config included after command)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
-        System.out.println("    myFilter.json content: ");
-        System.out.println("    {\n" +
-                "  \"filter\": {\n" +
-                "    \"lists\": {\n" +
-                "      \"BeforeDate_itemModified\" : \"2022-10-24T23:59:59\",\n" +
-                "      \"AfterDate_itemModified\": \"2022-10-22T23:59:59\"\n" +
-                "    },\n" +
-                "    \"folders\": {\n" +
-                "      \"BeforeDate_Modified\" : null,\n" +
-                "      \"AfterDate_Modified\": null\n" +
-                "    },\n" +
-                "    \"files\": {\n" +
-                "      \"BeforeDate_Modified\" : null,\n" +
-                "      \"AfterDate_Modified\": null\n" +
-                "    }\n" +
-                "  }\n" +
-                "}");
-        System.out.println(" 6. Collect all data, apply date range filter to lists & order folders by ItemCount (.json config included after command)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
-        System.out.println("    myFilter.json content:");
-        System.out.println("{\n" +
-                "     \"filter\": {\n" +
-                "       \"lists\": {\n" +
-                "         \"BeforeDate_itemModified\" : \"2022-10-24T23:59:59\",\n" +
-                "         \"AfterDate_itemModified\": \"2022-10-22T23:59:59\"\n" +
-                "       },\n" +
-                "        \"folders\": {\n" +
-                "          \"BeforeDate_Modified\" : null,\n" +
-                "          \"AfterDate_Modified\": null\n" +
-                "        },\n" +
-                "        \"files\": {\n" +
-                "          \"BeforeDate_Modified\" : null,\n" +
-                "          \"AfterDate_Modified\": null\n" +
-                "        }\n" +
-                "     }\n" +
-                "     \"orderBy\": {\n" +
-                "        \"folders\": [\"ItemCount\"]\n" +
-                "     }\n" +
-                "}");
-        System.out.println(" 7. Skip subsites, order folders by ItemCount, Title & order lists by Title (.json config included after command)");
-        System.out.println("    java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --filter-conf=myFilter.json");
-        System.out.println("    myFilter.json content:");
-        System.out.println("{\n" +
-                "     \"filter\": {\n" +
-                "       \"lists\": {\n" +
-                "         \"BeforeDate_itemModified\" : null,\n" +
-                "         \"AfterDate_itemModified\": null\n" +
-                "       },\n" +
-                "        \"folders\": {\n" +
-                "          \"BeforeDate_Modified\" : null,\n" +
-                "          \"AfterDate_Modified\": null\n" +
-                "        },\n" +
-                "        \"files\": {\n" +
-                "          \"BeforeDate_Modified\" : null,\n" +
-                "          \"AfterDate_Modified\": null\n" +
-                "        }\n" +
-                "     }\n" +
-                "     \"orderBy\": {\n" +
-                "        \"lists\": [\"Title\"],\n" +
-                "        \"folders\": [\"ItemCount,Title\"]\n" +
-                "     }\n" +
-                "}");
-        System.out.println("The 'orderBy' field may also have an 'arrangement' property to return the result in ascending or descending order denoted by \"asc\" or \"desc\" respectively.");
-        System.out.println("Note that you can apply multiple filters, just specify the values in the json config.");
-        System.out.println("For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com)");
+        System.out.println("    * Examples of json configs are in the config-examples folder.");
+        System.out.println("    * You can apply multiple filters, just specify the values in the json config.");
+        System.out.println("For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com) or please visit https://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption to review odata query options");
         System.exit(0);
     }
 }

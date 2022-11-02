@@ -10,22 +10,19 @@ public class SharepointList {
     protected String createdDate;
     protected String lastItemModifiedDate;
     protected String lastItemDeletedDate;
-    protected List<String> fields;
     protected List<SharepointListItem> items;
     protected boolean hidden;
     protected int itemCount;
     protected SharepointMetadata metadata;
 
     public SharepointList(String id, String title, String createdDate,
-                          String lastItemModifiedDate, String lastItemDeletedDate,
-                          List<String> fields, List<SharepointListItem> items,
+                          String lastItemModifiedDate, String lastItemDeletedDate, List<SharepointListItem> items,
                           boolean hidden, int itemCount, SharepointMetadata metadata) {
         this.id = id;
         this.title = title;
         this.createdDate = createdDate;
         this.lastItemModifiedDate = lastItemModifiedDate;
         this.lastItemDeletedDate = lastItemDeletedDate;
-        this.fields = fields;
         this.items = items;
         this.hidden = hidden;
         this.itemCount = itemCount;
@@ -50,10 +47,6 @@ public class SharepointList {
 
     public String getLastItemDeletedDate() {
         return lastItemDeletedDate;
-    }
-
-    public List<String> getFields() {
-        return fields;
     }
 
     public List<SharepointListItem> getItems() {
