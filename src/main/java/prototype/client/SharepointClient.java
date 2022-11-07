@@ -181,6 +181,9 @@ public class SharepointClient {
         /* might need modification to the site list path if filters are applied */
         sitePathUrl = sharepointContentFilter.applyFilterToListPath(sitePathUrl);
         sitePathUrl = sharepointContentFilter.applyOrderToListPath(sitePathUrl);
+        sitePathUrl = sharepointContentFilter.applySkipToListPath(sitePathUrl);
+        sitePathUrl = sharepointContentFilter.applySelectToListPath(sitePathUrl);
+
         HttpGet httpGet = sharepointRequest.createGetRequestObject(sitePathUrl);
         HttpResponse response = getSharePointData(httpGet);
 
@@ -275,6 +278,8 @@ public class SharepointClient {
         /* might need modification to the site list path if filters are applied */
         sitePathUrl = sharepointContentFilter.applyFilterToFolderPath(sitePathUrl);
         sitePathUrl = sharepointContentFilter.applyOrderToFolderPath(sitePathUrl);
+        sitePathUrl = sharepointContentFilter.applySelectToFolderPath(sitePathUrl);
+        sitePathUrl = sharepointContentFilter.applySkipToFolderPath(sitePathUrl);
 
         HttpGet httpGet = sharepointRequest.createGetRequestObject(sitePathUrl);
         HttpResponse response = getSharePointData(httpGet);
@@ -336,6 +341,8 @@ public class SharepointClient {
         /* might need modification to the site list path if filters are applied */
         filesPath = sharepointContentFilter.applyFilterToFilePath(filesPath);
         filesPath = sharepointContentFilter.applyOrderToFilePath(filesPath);
+        filesPath = sharepointContentFilter.applySkipToFilePath(filesPath);
+        filesPath = sharepointContentFilter.applySelectToFilePath(filesPath);
 
         HttpGet httpGet = sharepointRequest.createGetRequestObject(filesPath);
         HttpResponse response = getSharePointData(httpGet);

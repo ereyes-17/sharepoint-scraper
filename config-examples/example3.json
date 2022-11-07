@@ -1,23 +1,16 @@
 {
   "filter": {
-    "files": [
-      "TimeLastModified gt datetime'2022-10-18T23:59:59Z' and TimeLastModified lt datetime'2022-10-24T00:00:00Z'",
-      "Length lt 243100"
-    ],
-    "lists": [
-      "LastItemModifiedDate eq datetime'2022-10-25T23:00:00Z'"
-    ],
     "folders": [
-      "Name ne 'Manuals'"
+      "Name ne 'Manuals'",
+      "ItemCount lt 10 and ItemCount gt 3"
     ]
   },
   "order": {
-    "files": {
-      "fields": ["Length"],
-      "arrangement": "desc"
-    },
     "folders": {
       "fields": ["ItemCount", "Name"]
     }
+  },
+  "skip": {
+    "folders": 2
   }
 }

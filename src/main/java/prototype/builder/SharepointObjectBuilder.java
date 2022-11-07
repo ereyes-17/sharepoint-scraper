@@ -176,10 +176,12 @@ public class SharepointObjectBuilder {
         }
 
         List<SharepointFolder> subFolders = null;
-        try {
-            subFolders = sharepointClient.determineSubFolders(data.getJSONObject("Folders"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!sharepointConfig.isSkipSubFolders()) {
+            try {
+                subFolders = sharepointClient.determineSubFolders(data.getJSONObject("Folders"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         SharepointMetadata metadata = buildSharepointMetadata(data.getJSONObject("__metadata"));

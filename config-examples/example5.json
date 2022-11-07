@@ -1,0 +1,10 @@
+{
+  "filter": {
+    "lists": [
+      "Title eq 'Top 10 Droids'"
+    ]
+  },
+  "select": {
+    "lists": ["Title", "Uses", "Created", "LastItemModifiedDate", "LastItemDeletedDate", "ItemCount", "Id", "Hidden"]
+  }
+}

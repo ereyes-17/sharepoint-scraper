@@ -220,4 +220,114 @@ public class SharepointContentFilter {
         }
         return sitePathUrl;
     }
+
+    public String applySkipToListPath(String sitePathUrl) {
+        int skipVal = sharepointConfig.getSkipListValue();
+        if (skipVal > 0) {
+            if (sitePathUrl.contains("$filter") || sitePathUrl.contains("$orderby")) {
+                sitePathUrl = sitePathUrl + "&?$skip=" + skipVal;
+            } else {
+                sitePathUrl = sitePathUrl + "?$skip=" + skipVal;
+            }
+            return sitePathUrl;
+        }
+        return sitePathUrl;
+    }
+
+    public String applySkipToFolderPath(String sitePathUrl) {
+        int skipVal = sharepointConfig.getSkipFolderValue();
+        if (skipVal > 0) {
+            if (sitePathUrl.contains("$filter") || sitePathUrl.contains("$orderby")) {
+                sitePathUrl = sitePathUrl + "&?$skip=" + skipVal;
+            } else {
+                sitePathUrl = sitePathUrl + "?$skip=" + skipVal;
+            }
+            return sitePathUrl;
+        }
+        return sitePathUrl;
+    }
+
+    public String applySkipToFilePath(String sitePathUrl) {
+        int skipVal = sharepointConfig.getSkipFileValue();
+        if (skipVal > 0) {
+            if (sitePathUrl.contains("$filter") || sitePathUrl.contains("$orderby")) {
+                sitePathUrl = sitePathUrl + "&?$skip=" + skipVal;
+            } else {
+                sitePathUrl = sitePathUrl + "?$skip=" + skipVal;
+            }
+            return sitePathUrl;
+        }
+        return sitePathUrl;
+    }
+
+    public String applySelectToListPath(String sitePathUrl) {
+        List<String> listOrderCriteria = sharepointConfig.getListSelectOptions();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (listOrderCriteria != null) {
+            for (String element : listOrderCriteria) {
+                if (listOrderCriteria.indexOf(element) != listOrderCriteria.size() - 1) {
+                    stringBuilder.append(element).append(",");
+                } else {
+                    stringBuilder.append(element);
+                }
+            }
+            String orderString = new String(stringBuilder);
+            if (sitePathUrl.contains("$")) {
+                sitePathUrl = sitePathUrl + "&?$select=" + orderString;
+            } else {
+                sitePathUrl = sitePathUrl + "?$select=" + orderString;
+            }
+            return sitePathUrl;
+        }
+
+        return sitePathUrl;
+    }
+
+    public String applySelectToFolderPath(String sitePathUrl) {
+        List<String> folderSelectCriteria = sharepointConfig.getFolderSelectOptions();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (folderSelectCriteria != null) {
+            for (String element : folderSelectCriteria) {
+                if (folderSelectCriteria.indexOf(element) != folderSelectCriteria.size() - 1) {
+                    stringBuilder.append(element).append(",");
+                } else {
+                    stringBuilder.append(element);
+                }
+            }
+            String orderString = new String(stringBuilder);
+            if (sitePathUrl.contains("$")) {
+                sitePathUrl = sitePathUrl + "&?$select=" + orderString;
+            } else {
+                sitePathUrl = sitePathUrl + "?$select=" + orderString;
+            }
+            return sitePathUrl;
+        }
+        return sitePathUrl;
+    }
+
+    public String applySelectToFilePath(String sitePathUrl) {
+        List<String> fileSelectCriteria = sharepointConfig.getFileSelectOptions();
+        StringBuilder stringBuilder = new StringBuilder();
+
+        if (fileSelectCriteria != null) {
+            for (String element : fileSelectCriteria) {
+                if (fileSelectCriteria.indexOf(element) != fileSelectCriteria.size() - 1) {
+                    stringBuilder.append(element).append(",");
+                } else {
+                    stringBuilder.append(element);
+                }
+            }
+            String orderString = new String(stringBuilder);
+            if (sitePathUrl.contains("$")) {
+                sitePathUrl = sitePathUrl + "&?$select=" + orderString;
+            } else {
+                sitePathUrl = sitePathUrl + "?$select=" + orderString;
+            }
+            return sitePathUrl;
+        }
+        return sitePathUrl;
+    }
+
 }

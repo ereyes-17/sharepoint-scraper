@@ -45,6 +45,7 @@ public class Main {
         String skipArgs = null;
         boolean noDownload = false;
         String pathToFilterConfig = null;
+        String timezone = "EST"; // default timezone is EST
 
         /* determine which optional arguments were passed in */
         for (String argument : optionalArguments) {
@@ -61,10 +62,13 @@ public class Main {
             if (argument.contains("--filter-conf=")) {
                 pathToFilterConfig = argument.split("=")[1];
             }
+            if (argument.contains("--timezone=")) {
+                timezone = argument.split("=")[1];
+            }
         }
 
         /* Initialize the configuration class */
-        sharepointConfig = new SharepointConfig(rootSite, username, password, domain, noDownload);
+        sharepointConfig = new SharepointConfig(rootSite, username, password, domain, noDownload, timezone);
         /* Before initializing the client, let's check if any configuration files are needed */
         if (pathToFilterConfig != null) {
             /* Update sharepointConfig */
@@ -134,6 +138,9 @@ public class Main {
                     case "files":
                         sharepointConfig.setSkipFiles(true);
                         break;
+                    case "subfolders":
+                        sharepointConfig.setSkipSubFolders(true);
+                        break;
                     default:
                         System.out.println(sharepointObj + " is NOT a Sharepoint object.");
                         System.exit(1);
@@ -150,6 +157,8 @@ public class Main {
             }
             else if (skipArgs.trim().equalsIgnoreCase("files")) {
                 sharepointConfig.setSkipFiles(true);
+            } else if (skipArgs.trim().equalsIgnoreCase("subfolders")) {
+                sharepointConfig.setSkipSubFolders(true);
             } else {
                 System.out.println(skipArgs + " is NOT a Sharepoint object.");
                 System.exit(1);
@@ -207,7 +216,7 @@ public class Main {
                 } catch (JSONException ignored) {
                     /* We don't really care here */
                 }
-                /* Repeat the process for folders and lists */
+                /* Repeat the process for folders and files */
                 try {
                     /* Check to see if there's a 'folders' prop */
                     JSONArray folderFilterOptions = filterObj.getJSONArray("folders");
@@ -219,7 +228,7 @@ public class Main {
                     /* We don't really care here */
                 }
                 try {
-                    /* Check to see if there's a 'lists' prop */
+                    /* Check to see if there's a 'files' prop */
                     JSONArray fileFilterOptions = filterObj.getJSONArray("files");
                     /* Convert the json array to a List */
                     List<String> elements = convertJSONArrayToList(fileFilterOptions);
@@ -237,7 +246,7 @@ public class Main {
             } catch (JSONException ignored) {
                 /* We don't really care here */
             }
-            /* If we received an order prop, let's see what the user order the user wants */
+            /* If we received an order prop, let's see what order the user wants */
             if (orderObj != null) {
                 try {
                     /* Check to see if there's a 'lists' prop */
@@ -251,7 +260,7 @@ public class Main {
                 } catch (JSONException ignored) {
                     /* We don't really care here */
                 }
-                /* Repeat the process for folders and lists */
+                /* Repeat the process for folders and files */
                 try {
                     /* Check to see if there's a 'lists' prop */
                     JSONObject folderOrderObj = orderObj.getJSONObject("folders");
@@ -265,7 +274,7 @@ public class Main {
                     /* We don't really care here */
                 }
                 try {
-                    /* Check to see if there's a 'lists' prop */
+                    /* Check to see if there's a 'files' prop */
                     JSONObject filesOrderObj = orderObj.getJSONObject("files");
                     /* Get the fields list */
                     JSONArray filesOrderFields = filesOrderObj.getJSONArray("fields");
@@ -273,6 +282,79 @@ public class Main {
                     List<String> elements = convertJSONArrayToList(filesOrderFields);
                     /* Update sharepointConfig */
                     sharepointConfig.setFileOrderFields(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
+            }
+
+            /* Retrieve the skip property */
+            JSONObject skipObj = null;
+            try {
+                skipObj = jsonObject.getJSONObject("skip");
+            } catch (JSONException ignored) {
+
+            }
+
+            /* If we received a skip prop, let's see what values are desired by the user */
+            if (skipObj != null) {
+                try {
+                    /* Determine for lists */
+                    int listSkip = skipObj.getInt("lists");
+                    sharepointConfig.setSkipListValue(listSkip);
+                } catch (JSONException ignored) {
+                    sharepointConfig.setSkipListValue(-1);
+                }
+                try {
+                    /* Determine for folders */
+                    int foldersSkip = skipObj.getInt("folders");
+                    sharepointConfig.setSkipFolderValue(foldersSkip);
+                } catch (JSONException ignored) {
+                    sharepointConfig.setSkipFolderValue(-1);
+                }
+                try {
+                    /* Determine for files */
+                    int fileSkip = skipObj.getInt("files");
+                    sharepointConfig.setSkipFileValue(fileSkip);
+                } catch (JSONException ignored) {
+                    sharepointConfig.setSkipFileValue(-1);
+                }
+            }
+
+            /* Retrieve the select property */
+            JSONObject selectObj = null;
+            try {
+                selectObj = jsonObject.getJSONObject("select");
+            } catch (JSONException ignored) {
+
+            }
+
+            /* If we received a select prop, let's see what fields the user desires */
+            if (selectObj != null) {
+                try {
+                    JSONArray listSelectFields = selectObj.getJSONArray("lists");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(listSelectFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setListSelectOptions(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
+                /* Repeat the process for folders and files */
+                try {
+                    JSONArray folderSelectFields = selectObj.getJSONArray("folders");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(folderSelectFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFolderSelectOptions(elements);
+                } catch (JSONException ignored) {
+                    /* We don't really care here */
+                }
+                try {
+                    JSONArray filesSelectFields = selectObj.getJSONArray("files");
+                    /* Convert the json array to a List */
+                    List<String> elements = convertJSONArrayToList(filesSelectFields);
+                    /* Update sharepointConfig */
+                    sharepointConfig.setFileSelectOptions(elements);
                 } catch (JSONException ignored) {
                     /* We don't really care here */
                 }
@@ -306,7 +388,7 @@ public class Main {
         System.out.println("    password: Sharepoint password");
         System.out.println("    domain  : Sharepoint domain");
         System.out.println("  Optional arguments (any order):");
-        System.out.println("    --skip=       : Skip a Sharepoint object. Options include 'subsites','lists','folders','files'");
+        System.out.println("    --skip=       : Skip a Sharepoint object. Options include 'subsites','lists','folders','files','subfolders'");
         System.out.println("                  : You may skip multiple objects. Look at example 3.");
         System.out.println("    --output=     : Do you want output files? Options include 'true', 'false' (default is false)");
         System.out.println("    --no-download : Do you want to fetch discovered files? Default is false, add argument to make true");

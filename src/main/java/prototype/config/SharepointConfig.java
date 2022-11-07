@@ -11,24 +11,33 @@ public class SharepointConfig {
     protected String domain;
     protected final String ODATA_PARAM = "application/json;odata=verbose";
     protected boolean noDownload;
+    protected String timezone;
     protected boolean skipSubsites = false;
     protected boolean skipLists = false;
     protected boolean skipFolders = false;
     protected boolean skipFiles = false;
+    protected boolean skipSubFolders = false;
     protected List<String> listFilterOptions;
     protected List<String> folderFilterOptions;
     protected List<String> fileFilterOptions;
     protected List<String> listOrderFields;
     protected List<String> folderOrderFields;
     protected List<String> fileOrderFields;
+    protected int skipListValue;
+    protected int skipFolderValue;
+    protected int skipFileValue;
+    protected List<String> listSelectOptions;
+    protected List<String> folderSelectOptions;
+    protected List<String> fileSelectOptions;
 
     public SharepointConfig(String rootSite, String username, String password,
-                            String domain, boolean noDownload) {
+                            String domain, boolean noDownload, String timezone) {
         this.rootSite = rootSite;
         this.username = username;
         this.password = password;
         this.domain = domain;
         this.noDownload = noDownload;
+        this.timezone = timezone;
     }
 
     public String getRootSite() {
@@ -50,6 +59,7 @@ public class SharepointConfig {
     public boolean getNoDownload() {
         return noDownload;
     }
+    public String getTimezone() { return timezone; }
 
     public boolean isSkipSubsites() {
         return skipSubsites;
@@ -81,6 +91,14 @@ public class SharepointConfig {
 
     public void setSkipFiles(boolean skipFiles) {
         this.skipFiles = skipFiles;
+    }
+
+    public boolean isSkipSubFolders() {
+        return skipSubFolders;
+    }
+
+    public void setSkipSubFolders(boolean skipSubFolders) {
+        this.skipSubFolders = skipSubFolders;
     }
 
     public String getODATA_PARAM() {
@@ -137,5 +155,53 @@ public class SharepointConfig {
 
     public void setFileOrderFields(List<String> fileOrderFields) {
         this.fileOrderFields = fileOrderFields;
+    }
+
+    public int getSkipListValue() {
+        return skipListValue;
+    }
+
+    public void setSkipListValue(int skipListValue) {
+        this.skipListValue = skipListValue;
+    }
+
+    public int getSkipFolderValue() {
+        return skipFolderValue;
+    }
+
+    public void setSkipFolderValue(int skipFolderValue) {
+        this.skipFolderValue = skipFolderValue;
+    }
+
+    public int getSkipFileValue() {
+        return skipFileValue;
+    }
+
+    public void setSkipFileValue(int skipFileValue) {
+        this.skipFileValue = skipFileValue;
+    }
+
+    public List<String> getListSelectOptions() {
+        return listSelectOptions;
+    }
+
+    public void setListSelectOptions(List<String> listSelectOptions) {
+        this.listSelectOptions = listSelectOptions;
+    }
+
+    public List<String> getFolderSelectOptions() {
+        return folderSelectOptions;
+    }
+
+    public void setFolderSelectOptions(List<String> folderSelectOptions) {
+        this.folderSelectOptions = folderSelectOptions;
+    }
+
+    public List<String> getFileSelectOptions() {
+        return fileSelectOptions;
+    }
+
+    public void setFileSelectOptions(List<String> fileSelectOptions) {
+        this.fileSelectOptions = fileSelectOptions;
     }
 }
