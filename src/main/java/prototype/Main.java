@@ -45,7 +45,7 @@ public class Main {
         String skipArgs = null;
         boolean noDownload = false;
         String pathToFilterConfig = null;
-        String timezone = "EST"; // default timezone is EST
+        String timezoneOffset = "Z"; // default timezone is UTC
 
         /* determine which optional arguments were passed in */
         for (String argument : optionalArguments) {
@@ -62,13 +62,10 @@ public class Main {
             if (argument.contains("--filter-conf=")) {
                 pathToFilterConfig = argument.split("=")[1];
             }
-            if (argument.contains("--timezone=")) {
-                timezone = argument.split("=")[1];
-            }
         }
 
         /* Initialize the configuration class */
-        sharepointConfig = new SharepointConfig(rootSite, username, password, domain, noDownload, timezone);
+        sharepointConfig = new SharepointConfig(rootSite, username, password, domain, noDownload);
         /* Before initializing the client, let's check if any configuration files are needed */
         if (pathToFilterConfig != null) {
             /* Update sharepointConfig */

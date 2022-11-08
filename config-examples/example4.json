@@ -1,7 +1,7 @@
 {
   "filter": {
     "files": [
-      "TimeLastModified gt datetime'2022-10-18T23:59:59' and TimeLastModified lt datetime'2022-10-24T00:00:00Z'",
+      "TimeLastModified gt datetime'2022-10-18T23:59:59Z' and TimeLastModified lt datetime'2022-10-24T00:00:00Z'",
       "Length gt 15000 and Length lt 32000"
     ],
     "lists": [

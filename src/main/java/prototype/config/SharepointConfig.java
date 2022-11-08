@@ -11,7 +11,6 @@ public class SharepointConfig {
     protected String domain;
     protected final String ODATA_PARAM = "application/json;odata=verbose";
     protected boolean noDownload;
-    protected String timezone;
     protected boolean skipSubsites = false;
     protected boolean skipLists = false;
     protected boolean skipFolders = false;
@@ -31,13 +30,12 @@ public class SharepointConfig {
     protected List<String> fileSelectOptions;
 
     public SharepointConfig(String rootSite, String username, String password,
-                            String domain, boolean noDownload, String timezone) {
+                            String domain, boolean noDownload) {
         this.rootSite = rootSite;
         this.username = username;
         this.password = password;
         this.domain = domain;
         this.noDownload = noDownload;
-        this.timezone = timezone;
     }
 
     public String getRootSite() {
@@ -59,7 +57,6 @@ public class SharepointConfig {
     public boolean getNoDownload() {
         return noDownload;
     }
-    public String getTimezone() { return timezone; }
 
     public boolean isSkipSubsites() {
         return skipSubsites;
