@@ -138,6 +138,12 @@ public class Main {
                     case "subfolders":
                         sharepointConfig.setSkipSubFolders(true);
                         break;
+                    case "recycled":
+                        sharepointConfig.setSkipRecycledItems(true);
+                        break;
+                    case "groups":
+                        sharepointConfig.setSkipGroups(true);
+                        break;
                     default:
                         System.out.println(sharepointObj + " is NOT a Sharepoint object.");
                         System.exit(1);
@@ -156,6 +162,10 @@ public class Main {
                 sharepointConfig.setSkipFiles(true);
             } else if (skipArgs.trim().equalsIgnoreCase("subfolders")) {
                 sharepointConfig.setSkipSubFolders(true);
+            } else if (skipArgs.trim().equalsIgnoreCase("recycled")) {
+                sharepointConfig.setSkipRecycledItems(true);
+            } else if (skipArgs.trim().equalsIgnoreCase("groups")) {
+                sharepointConfig.setSkipGroups(true);
             } else {
                 System.out.println(skipArgs + " is NOT a Sharepoint object.");
                 System.exit(1);

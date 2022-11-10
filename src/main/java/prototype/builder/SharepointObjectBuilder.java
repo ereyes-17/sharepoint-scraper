@@ -78,17 +78,21 @@ public class SharepointObjectBuilder {
         SharepointMetadata metadata = buildSharepointMetadata(data.getJSONObject("__metadata"));
 
         List<SharepointRecycledItem> recycledItems = null;
-        try {
-            recycledItems = sharepointClient.determineRecycledItems(data.getJSONObject("RecycleBin"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!sharepointConfig.isSkipRecycledItems()) {
+            try {
+                recycledItems = sharepointClient.determineRecycledItems(data.getJSONObject("RecycleBin"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         List<SharepointGroup> sharepointGroups = null;
-        try {
-            sharepointGroups = sharepointClient.determineGroups(data.getJSONObject("SiteGroups"));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (!sharepointConfig.isSkipGroups()) {
+            try {
+                sharepointGroups = sharepointClient.determineGroups(data.getJSONObject("SiteGroups"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return new SharepointSite(url, description, id, createdDate,

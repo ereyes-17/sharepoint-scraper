@@ -16,6 +16,8 @@ public class SharepointConfig {
     protected boolean skipFolders = false;
     protected boolean skipFiles = false;
     protected boolean skipSubFolders = false;
+    protected boolean skipRecycledItems = false;
+    protected boolean skipGroups = false;
     protected List<String> listFilterOptions;
     protected List<String> folderFilterOptions;
     protected List<String> fileFilterOptions;
@@ -200,5 +202,21 @@ public class SharepointConfig {
 
     public void setFileSelectOptions(List<String> fileSelectOptions) {
         this.fileSelectOptions = fileSelectOptions;
+    }
+
+    public void setSkipRecycledItems(boolean skipRecycledItems) {
+        this.skipRecycledItems = skipRecycledItems;
+    }
+
+    public boolean isSkipRecycledItems() {
+        return skipRecycledItems;
+    }
+
+    public void setSkipGroups(boolean skipGroups) {
+        this.skipGroups = skipGroups;
+    }
+
+    public boolean isSkipGroups() {
+        return skipGroups;
     }
 }
