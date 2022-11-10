@@ -218,8 +218,10 @@ public class SharepointObjectBuilder {
 
         SharepointMetadata metadata = buildSharepointMetadata(data.getJSONObject("__metadata"));
 
+        SharepointUser author = buildSharepointUser(data.getJSONObject("Author"));
+
         return new SharepointFile(name, comment, createdDate, lastModifiedDate, relativeUrl,
-                length, majorVersion, minorVersion, metadata);
+                length, majorVersion, minorVersion, metadata, author);
     }
 
     public SharepointMetadata buildSharepointMetadata(JSONObject metadataObj) {

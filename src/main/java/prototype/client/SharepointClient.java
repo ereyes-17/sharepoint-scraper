@@ -344,6 +344,14 @@ public class SharepointClient {
         filesPath = sharepointContentFilter.applySkipToFilePath(filesPath);
         filesPath = sharepointContentFilter.applySelectToFilePath(filesPath);
 
+        /* we always want to expand the Author property */
+        if (filesPath.contains("$filter") || filesPath.contains("$order") ||
+                filesPath.contains("$skip") || filesPath.contains("$select")) {
+            filesPath = filesPath + "&?$expand=Author";
+        } else {
+            filesPath = filesPath + "?$expand=Author";
+        }
+
         HttpGet httpGet = sharepointRequest.createGetRequestObject(filesPath);
         HttpResponse response = getSharePointData(httpGet);
         sharepointResponseExceptionHandler.handleResponseFromStatusCode(response.getStatusLine().getStatusCode());

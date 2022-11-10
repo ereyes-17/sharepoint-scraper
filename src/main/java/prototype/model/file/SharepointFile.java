@@ -1,5 +1,6 @@
 package prototype.model.file;
 
+import prototype.model.membership.SharepointUser;
 import prototype.model.metadata.SharepointMetadata;
 
 public class SharepointFile {
@@ -12,10 +13,12 @@ public class SharepointFile {
     protected int majorVersion;
     protected int minorVersion;
     protected SharepointMetadata metadata;
+    protected SharepointUser author;
 
     public SharepointFile(String name, String comment, String createdDate,
                           String lastModifiedDate, String relativeUrl, int length,
-                          int majorVersion, int minorVersion, SharepointMetadata metadata) {
+                          int majorVersion, int minorVersion, SharepointMetadata metadata,
+                          SharepointUser author) {
         this.name = name;
         this.comment = comment;
         this.createdDate = createdDate;
@@ -25,6 +28,7 @@ public class SharepointFile {
         this.majorVersion = majorVersion;
         this.minorVersion = minorVersion;
         this.metadata = metadata;
+        this.author = author;
     }
 
     public String getName() {
@@ -61,5 +65,9 @@ public class SharepointFile {
 
     public SharepointMetadata getMetadata() {
         return metadata;
+    }
+
+    public SharepointUser getAuthor() {
+        return author;
     }
 }
