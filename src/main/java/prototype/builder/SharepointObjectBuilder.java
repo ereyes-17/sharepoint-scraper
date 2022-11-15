@@ -1,7 +1,5 @@
 package prototype.builder;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
 import org.json.JSONException;
 import org.json.JSONObject;
 import prototype.client.SharepointClient;
@@ -42,11 +40,6 @@ public class SharepointObjectBuilder {
     }
     public SharepointSite buildSharepointSite(JSONObject data) {
         System.out.println("Building site..." );
-
-        /* we are filtering unwanted data - return null if any is found */
-        if (sharepointContentFilter.unwantedInTitle(data) || sharepointContentFilter.unwantedInUrl(data)) {
-            return null;
-        }
 
         String url = data.getString("Url");
         String id = data.getString("Id");
@@ -102,11 +95,6 @@ public class SharepointObjectBuilder {
     public SharepointList buildSharepointList(JSONObject data) throws IOException {
         System.out.println("Building list..." );
 
-        /* we are filtering unwanted data - return null if any is found */
-        if (sharepointContentFilter.unwantedInTitle(data)) {
-            return null;
-        }
-
         String id = data.getString("Id");
         String title = data.getString("Title");
         String createdDate = data.getString("Created");
@@ -129,10 +117,6 @@ public class SharepointObjectBuilder {
 
         try {
             title = data.get("Title").toString();
-            /* we are filtering unwanted data - return null if any is found */
-            if (sharepointContentFilter.unwantedInTitle(data)) {
-                return null;
-            }
         } catch (JSONException ignored) {
             /* in some cases "Title" is null */
         }
@@ -160,11 +144,6 @@ public class SharepointObjectBuilder {
 
     public SharepointFolder buildSharepointFolder(JSONObject data) {
         System.out.println("Building folder..." );
-
-        /* we are filtering unwanted data - return null if any is found */
-        if (sharepointContentFilter.unwantedInName(data)) {
-            return null;
-        }
 
         String name = data.getString("Name");
         String relativeUrl = data.getString("ServerRelativeUrl");
@@ -195,11 +174,6 @@ public class SharepointObjectBuilder {
 
     public SharepointFile buildSharepointFile(JSONObject data) throws IOException {
         System.out.println("Building file..." );
-
-        /* we are filtering unwanted data - return null if any is found */
-        if (sharepointContentFilter.unwantedInName(data)) {
-            return null;
-        }
 
         String name = data.getString("Name");
         String comment = data.getString("CheckInComment");
@@ -300,9 +274,5 @@ public class SharepointObjectBuilder {
         }
 
         return new SharepointRecycledItem(id, deletedDate, title, directory, deletedByDetails, size);
-    }
-
-    public void setObjectToSkip(String objectToSkip) {
-        this.objectToSkip = objectToSkip;
     }
 }
