@@ -112,7 +112,8 @@ public class SharepointClient {
 
     public List<SharepointSite> collectSiteData() throws IOException {
         String targetApiPath = SharepointUrlConfig.SHAREPOINT_API_PATH;
-        HttpGet httpGet = sharepointRequest.createGetRequestObject(sharepointConfig.getRootSite() + targetApiPath);
+        /* We expand the Author field to get the user who created the site */
+        HttpGet httpGet = sharepointRequest.createGetRequestObject(sharepointConfig.getRootSite() + targetApiPath + "?$expand=Author");
 
         /* Execute the initial request - we will get data we need for further searching */
         System.out.println("Executing initial GET request to " + sharepointConfig.getRootSite() + targetApiPath + "...");
@@ -124,7 +125,6 @@ public class SharepointClient {
         /* Let's add the root site to the sites list - our initial response body */
         JSONObject d = (JSONObject) responseBody.get("d");
         currentSite = sharepointObjectBuilder.buildSharepointSite(d);
-        currentSite.setIsHomeSite(true);
         sites.add(currentSite);
 
         /* Determine the sub sites */
@@ -140,7 +140,8 @@ public class SharepointClient {
     private void determineSubSites(String websPath) throws IOException {
         System.out.println("Searching for subsites");
 
-        HttpGet httpGet = sharepointRequest.createGetRequestObject(websPath);
+        /* We expand the Author field to get the user who created the site */
+        HttpGet httpGet = sharepointRequest.createGetRequestObject(websPath + "?$expand=Author");
         HttpResponse response = getSharePointData(httpGet);
         sharepointResponseExceptionHandler.handleResponseFromStatusCode(response.getStatusLine().getStatusCode());
         JSONObject responseBody = new JSONObject(EntityUtils.toString(response.getEntity()));

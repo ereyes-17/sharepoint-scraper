@@ -79,6 +79,8 @@ public class SharepointObjectBuilder {
             }
         }
 
+        SharepointUser author = buildSharepointUser(data.getJSONObject("Author"));
+
         List<SharepointGroup> sharepointGroups = null;
         if (!sharepointConfig.isSkipGroups()) {
             try {
@@ -89,7 +91,7 @@ public class SharepointObjectBuilder {
         }
 
         return new SharepointSite(url, description, id, createdDate,
-                title, lists, folders, metadata, recycledItems, sharepointGroups);
+                title, lists, folders, metadata, recycledItems, author, sharepointGroups);
     }
 
     public SharepointList buildSharepointList(JSONObject data) throws IOException {
@@ -247,6 +249,12 @@ public class SharepointObjectBuilder {
         String title = data.getString("Title");
         String email = data.getString("Email");
         boolean isSiteAdmin = data.getBoolean("IsSiteAdmin");
+        String nameId = null;
+        try {
+            nameId = data.getJSONObject("UserId").getString("NameId");
+        } catch (JSONException ignored) {
+            /* in some cases "UserId" is null */
+        }
         String nameIdIssuer = null;
         try {
             nameIdIssuer = data.getJSONObject("UserId").getString("NameIdIssuer");
@@ -254,7 +262,7 @@ public class SharepointObjectBuilder {
             /* in some cases "UserId" is null */
         }
 
-        return new SharepointUser(loginName, title, email, isSiteAdmin, nameIdIssuer);
+        return new SharepointUser(loginName, title, email, isSiteAdmin, nameId, nameIdIssuer);
     }
 
     public SharepointRecycledItem buildSharepointRecycledItem(JSONObject data)  {

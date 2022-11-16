@@ -5,13 +5,15 @@ public class SharepointUser {
     protected String title;
     protected String email;
     protected boolean isSiteAdmin;
+    protected String nameId;
     protected String nameIdIssuer;
 
-    public SharepointUser(String loginName, String title, String email, boolean isSiteAdmin, String nameIdIssuer) {
+    public SharepointUser(String loginName, String title, String email, boolean isSiteAdmin, String nameId, String nameIdIssuer) {
         this.loginName = loginName;
         this.title = title;
         this.email = email;
         this.isSiteAdmin = isSiteAdmin;
+        this.nameId = nameId;
         this.nameIdIssuer = nameIdIssuer;
     }
 
@@ -29,6 +31,10 @@ public class SharepointUser {
 
     public boolean isSiteAdmin() {
         return isSiteAdmin;
+    }
+
+    public String getNameId() {
+        return nameId;
     }
 
     public String getNameIdIssuer() {

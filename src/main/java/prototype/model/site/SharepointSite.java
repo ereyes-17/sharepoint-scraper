@@ -3,6 +3,7 @@ package prototype.model.site;
 import prototype.model.folder.SharepointFolder;
 import prototype.model.list.SharepointList;
 import prototype.model.membership.SharepointGroup;
+import prototype.model.membership.SharepointUser;
 import prototype.model.metadata.SharepointMetadata;
 import prototype.model.recyclebin.SharepointRecycledItem;
 
@@ -22,7 +23,7 @@ public class SharepointSite {
     protected List<SharepointFolder> folders;
     protected SharepointMetadata metadata;
     protected List<SharepointRecycledItem> recycledItems;
-    protected boolean isHomeSite;
+    protected SharepointUser author;
     protected List<SharepointGroup> sharepointGroups;
 
     public SharepointSite(String url,
@@ -34,6 +35,7 @@ public class SharepointSite {
                           List<SharepointFolder> folders,
                           SharepointMetadata metadata,
                           List<SharepointRecycledItem> recycledItems,
+                          SharepointUser author,
                           List<SharepointGroup> sharepointGroups) {
         this.url = url;
         this.parentUrl = this.determineParentUrl(url);
@@ -45,7 +47,7 @@ public class SharepointSite {
         this.folders = folders;
         this.metadata = metadata;
         this.recycledItems = recycledItems;
-        this.isHomeSite = false;
+        this.author = author;
         this.sharepointGroups = sharepointGroups;
     }
 
@@ -104,12 +106,8 @@ public class SharepointSite {
         return recycledItems;
     }
 
-    public boolean isHomeSite() {
-        return isHomeSite;
-    }
-
-    public void setIsHomeSite(boolean isHomeSite) {
-        this.isHomeSite = isHomeSite;
+    public SharepointUser getAuthor() {
+        return author;
     }
 
     public List<SharepointGroup> getSharepointGroups() {
