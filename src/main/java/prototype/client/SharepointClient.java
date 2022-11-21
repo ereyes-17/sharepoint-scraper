@@ -110,7 +110,7 @@ public class SharepointClient {
                 .build();
     }
 
-    public List<SharepointSite> collectSiteData() throws IOException {
+    public SharepointSite collectSiteData() throws IOException {
         String targetApiPath = SharepointUrlConfig.SHAREPOINT_API_PATH;
         /* We expand the Author field to get the user who created the site */
         HttpGet httpGet = sharepointRequest.createGetRequestObject(sharepointConfig.getRootSite() + targetApiPath + "?$expand=Author");
@@ -125,19 +125,11 @@ public class SharepointClient {
         /* Let's add the root site to the sites list - our initial response body */
         JSONObject d = (JSONObject) responseBody.get("d");
         currentSite = sharepointObjectBuilder.buildSharepointSite(d);
-        sites.add(currentSite);
 
-        /* Determine the sub sites */
-        if (!sharepointConfig.isSkipSubsites()) {
-            String websPath = d.getJSONObject("Webs").getJSONObject("__deferred").getString("uri");
-            determineSubSites(websPath);
-        }
-
-        /* With our content filter we can expect nulls to be added to the sites list, so remove them before returning */
-        return sites.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        return currentSite;
     }
 
-    private void determineSubSites(String websPath) throws IOException {
+    public List<SharepointSite> determineSubSites(String websPath) throws IOException {
         System.out.println("Searching for subsites");
 
         /* We expand the Author field to get the user who created the site */
@@ -150,13 +142,19 @@ public class SharepointClient {
         /* view the results array from the response */
         JSONObject d = (JSONObject) responseBody.get("d");
         JSONArray resultsArray = d.getJSONArray("results");
+
+        List<SharepointSite> subsites = new ArrayList<>();
         /* Iterate the results */
         if (resultsArray.length() > 0) {
             resultsArray.forEach(result -> {
                 JSONObject resultObj = (JSONObject) result;
-                currentSite = sharepointObjectBuilder.buildSharepointSite(resultObj);
+                try {
+                    currentSite = sharepointObjectBuilder.buildSharepointSite(resultObj);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 /* add the site */
-                sites.add(currentSite);
+                subsites.add(currentSite);
                 /* recursively search for subsites - we can build the webs api path for each site here
                  *  this will keep us from making too many requests to the sharepoint site
                  */
@@ -173,6 +171,7 @@ public class SharepointClient {
                 }
             });
         }
+        return subsites;
     }
 
     public List<SharepointList> determineSiteLists(String siteUrl) throws IOException {

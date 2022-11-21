@@ -20,7 +20,8 @@ public class SharepointFileContentBuilder {
     }
 
     public void saveFile(byte[] fileBytes, String currentSiteTitle, String fileName) throws IOException {
-        String siteDirectory = DESTINATION_BASE_PATH + File.separator + currentSiteTitle.replace(" ", "");
+        currentSiteTitle = currentSiteTitle.replace("/", "_").replace("+", "-").replace(" ", "");
+        String siteDirectory = DESTINATION_BASE_PATH + File.separator + currentSiteTitle;
         Path sitePath = Paths.get(siteDirectory);
         if (!Files.exists(sitePath)) {
             Files.createDirectory(sitePath);

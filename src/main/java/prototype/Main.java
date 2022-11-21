@@ -22,8 +22,8 @@ import java.util.*;
 public class Main {
 
     public static SharepointConfig sharepointConfig;
-    public static List<SharepointSite> sites;
-    private static List<String> fileNames;
+    public static SharepointSite site;
+    private static String fileName;
     private static boolean outputInformation = false;
 
     public static void main(String[] args) throws URISyntaxException, IOException, NoSuchAlgorithmException,
@@ -90,19 +90,16 @@ public class Main {
         System.out.println("-----------------------------------------------------------------------------");
 
         /* call the client to collect data */
-        sites = sharepointClient.collectSiteData();
+        site = sharepointClient.collectSiteData();
 
-        assert sites != null;
-
-        fileNames = new ArrayList<>();
+        assert site != null;
 
         /* spit out the data */
-        sites.forEach(Main::generateOutputFiles);
+        generateOutput(site);
 
-        if (!fileNames.isEmpty()) {
-            fileNames.forEach(fileName -> {
-                System.out.println("Output File: " + fileName);
-            });
+        /* show where the output file is, if requested */
+        if (fileName != null) {
+            System.out.println("Output File: " + fileName);
         }
 
         /* display threads running at the end of the program */
@@ -174,7 +171,7 @@ public class Main {
     }
 
 
-    private static void generateOutputFiles(SharepointSite site) {
+    private static void generateOutput(SharepointSite site) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             String siteObjectAsString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(site);
@@ -189,7 +186,7 @@ public class Main {
                 byte[] siteObjectAsBytes = siteObjectAsString.getBytes();
                 fileOutputStream.write(siteObjectAsBytes);
                 fileOutputStream.close();
-                fileNames.add(outputFilePath);
+                fileName = outputFilePath;
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

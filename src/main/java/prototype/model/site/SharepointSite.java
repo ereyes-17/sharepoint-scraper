@@ -25,6 +25,7 @@ public class SharepointSite {
     protected List<SharepointRecycledItem> recycledItems;
     protected SharepointUser author;
     protected List<SharepointGroup> sharepointGroups;
+    protected List<SharepointSite> subsites;
 
     public SharepointSite(String url,
                           String description,
@@ -36,19 +37,21 @@ public class SharepointSite {
                           SharepointMetadata metadata,
                           List<SharepointRecycledItem> recycledItems,
                           SharepointUser author,
-                          List<SharepointGroup> sharepointGroups) {
+                          List<SharepointGroup> sharepointGroups,
+                          List<SharepointSite> subsites) {
         this.url = url;
         this.parentUrl = this.determineParentUrl(url);
         this.description = description;
         this.id = id;
         this.createdDate = createdDate;
-        this.title = title;
+        this.title = title.replace("/", "_").replace("+", "-");
         this.lists = lists;
         this.folders = folders;
         this.metadata = metadata;
         this.recycledItems = recycledItems;
         this.author = author;
         this.sharepointGroups = sharepointGroups;
+        this.subsites = subsites;
     }
 
     private String determineParentUrl(String url) {
@@ -112,5 +115,9 @@ public class SharepointSite {
 
     public List<SharepointGroup> getSharepointGroups() {
         return sharepointGroups;
+    }
+
+    public List<SharepointSite> getSubsites() {
+        return subsites;
     }
 }

@@ -5,14 +5,84 @@ import prototype.config.SharepointConfig;
 import prototype.config.SharepointUrlConfig;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class SharepointContentFilter {
     protected SharepointConfig sharepointConfig;
-    protected final List<String> IGNORED_DATA = Arrays.asList("Nintex", "Workflow", "What's");
+    protected final List<String> IGNORED_DATA = Collections.singletonList("What's");
 
     public SharepointContentFilter(SharepointConfig sharepointConfig) {
         this.sharepointConfig = sharepointConfig;
+    }
+
+    public boolean unwantedInTitle(JSONObject data) {
+        boolean detected = false;
+
+        String title = data.getString("Title").toLowerCase();
+        for (String ignoredItem : IGNORED_DATA) {
+            if (title.contains(ignoredItem.toLowerCase())) {
+                detected = true;
+                break;
+            }
+        }
+        return detected;
+    }
+
+    public boolean unwantedInName(JSONObject data) {
+        boolean detected = false;
+
+        String name = data.getString("Name").toLowerCase();
+        for (String ignoredItem : IGNORED_DATA) {
+            if (name.contains(ignoredItem.toLowerCase())) {
+                detected = true;
+                break;
+            }
+        }
+        return detected;
+    }
+
+    public boolean unwantedInUrl(JSONObject data) {
+        boolean detected = false;
+
+        String url = data.getString("Url").toLowerCase();
+        for (String ignoredItem : IGNORED_DATA) {
+            if (url.contains(ignoredItem.toLowerCase())) {
+                detected = true;
+                break;
+            }
+        }
+        return detected;
+    }
+
+    public boolean unwantedInMetadata(JSONObject data) {
+        boolean detected = false;
+
+        JSONObject metadata = data.getJSONObject("__metadata");
+        String uri = metadata.getString("uri").toLowerCase();
+        String id = metadata.getString("id");
+
+        for (String ignoredItem : IGNORED_DATA) {
+            if (uri.contains(ignoredItem.toLowerCase()) || id.contains(ignoredItem.toLowerCase())) {
+                detected = true;
+                break;
+            }
+        }
+
+        return detected;
+    }
+
+    public boolean unwantedInServerRelativeUrl(JSONObject data) {
+        boolean detected = false;
+
+        String url = data.getString("ServerRelativeUrl").toLowerCase();
+        for (String ignoredItem : IGNORED_DATA) {
+            if (url.contains(ignoredItem.toLowerCase())) {
+                detected = true;
+                break;
+            }
+        }
+        return detected;
     }
 
     public String applyFilterToListPath(String sitePathUrl) {
