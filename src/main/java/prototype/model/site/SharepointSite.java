@@ -19,11 +19,11 @@ public class SharepointSite {
     protected String createdDate;
 
     protected String title;
+    protected SharepointUser author;
     protected List<SharepointList> lists;
     protected List<SharepointFolder> folders;
     protected SharepointMetadata metadata;
     protected List<SharepointRecycledItem> recycledItems;
-    protected SharepointUser author;
     protected List<SharepointGroup> sharepointGroups;
     protected List<SharepointSite> subsites;
 
@@ -45,11 +45,11 @@ public class SharepointSite {
         this.id = id;
         this.createdDate = createdDate;
         this.title = title.replace("/", "_").replace("+", "-");
+        this.author = author;
         this.lists = lists;
         this.folders = folders;
         this.metadata = metadata;
         this.recycledItems = recycledItems;
-        this.author = author;
         this.sharepointGroups = sharepointGroups;
         this.subsites = subsites;
     }
@@ -92,6 +92,9 @@ public class SharepointSite {
     public String getTitle() {
         return title;
     }
+    public SharepointUser getAuthor() {
+        return author;
+    }
 
     public List<SharepointList> getLists() {
         return lists;
@@ -107,10 +110,6 @@ public class SharepointSite {
 
     public List<SharepointRecycledItem> getRecycledItems() {
         return recycledItems;
-    }
-
-    public SharepointUser getAuthor() {
-        return author;
     }
 
     public List<SharepointGroup> getSharepointGroups() {
