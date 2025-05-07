@@ -1,4 +1,7 @@
-# Sharepoint-prototype
+# Sharepoint-scraper
+<h2>Introduction</h2>
+A simple java program to scrape your SharePoint site to discover files, lists, and additional content found in subsites. You may specify your search with simple program arguments, or you may apply a custom search configuration using SharePoint's API filters.
+
 <h3>Requirements</h3>
 * Java 8 or later
 * Maven
