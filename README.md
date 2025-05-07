@@ -21,7 +21,7 @@ A simple java program to scrape your SharePoint site to discover files, lists, a
 <li>--skip=       :  <em>Skip a Sharepoint object. Options include 'subsites','lists','folders','files'. : You may skip multiple objects. Look at example 3</em></li>
 <li>--output=     : <em>Do you want output files? Options include 'true', 'false' (default is false)</em></li>
 <li>--no-download : <em>Do you want to fetch discovered files? Default is false, add argument to make true</em></li>
-<li>--filter-conf=: <em>Include a filter (date-range & order): Path to the .json file is required</em></li>
+<li>--filter-conf=: <em>Include a filter: Path to the .json file is required</em></li>
 </ul>
 
 EXAMPLES:
