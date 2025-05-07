@@ -34,6 +34,5 @@ EXAMPLES:
 4. Skip lists, apply a configuration  
    ```java -jar target/SharePointPrototype-0.1.9-jar-with-dependencies.jar http://my-sharepoint-site.com/sites/MySite sharepointUser sharepointPassword sharepointDomain --skip=lists --filter-conf=myFilter.json```  
    * Examples of json configs are in the config-examples folder
-   * You can apply multiple filters, just specify the values in the json config  
-
-For any further questions, please contact sir Elijah Reyes (elijah.reyes@hitachivantarafederal.com) or please visit https://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption to review odata query options
+   * You can apply multiple filters, just specify the values in the json config
+   * Configurations are based on SharePoint's ODATA API: https://www.odata.org/documentation/odata-version-2-0/uri-conventions/#OrderBySystemQueryOption
