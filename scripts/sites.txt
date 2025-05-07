@@ -1,5 +1,5 @@
-http://sharepoint2019.hvftech.hdsflab.com/sites/star-wars
-http://sharepoint2019.hvftech.hdsflab.com/sites/star-wars/jedi
-http://sharepoint2019.hvftech.hdsflab.com/sites/star-wars/droids
-http://sharepoint2019.hvftech.hdsflab.com/sites/star-wars/sith
+http://localhost/sites/star-wars
+http://localhost/sites/star-wars/jedi
+http://localhost/sites/star-wars/droids
+http://localhost/sites/star-wars/sith
 
